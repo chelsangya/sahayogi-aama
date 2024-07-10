@@ -30,9 +30,9 @@ app.use(multiparty());
 
 
 cloudinary.config({ 
-  cloud_name: 'dczxrob6w', 
-  api_key: '153278163438971', 
-  api_secret: 'AylcERDx_b0d9n_2y4hsof7v1yE' 
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.API_KEY,
+  api_secret: process.env.API_SECRET
 });
 
 app.use('/api/user',require('./routes/userRoutes'));
