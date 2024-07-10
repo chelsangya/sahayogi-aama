@@ -83,6 +83,9 @@ Thumbs.db
 .vscode/
 *.swp
 
+#SSL
+ssl/
+
 # Ignore specific files in your project structure
 # Backend node_modules
 backend_sahayogi_aama/node_modules/
