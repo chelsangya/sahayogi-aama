@@ -42,6 +42,11 @@ app.use('/api/aama', require('./routes/aamaRoutes'));
 app.use('/api/booking', require('./routes/bookingRoutes'));
 app.use('/api/favourite', require('./routes/favouriteRoutes'));
 
+// Add a route for the root URL
+app.get('/', (req, res) => {
+    res.send('Hello, the server is running!');
+});
+
 // Load SSL certificate and key
 const sslOptions = {
     key: fs.readFileSync('./ssl/private.key'),
