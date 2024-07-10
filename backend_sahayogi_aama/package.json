@@ -1,0 +1,31 @@
+{
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cloudinary": "^1.41.0",
+    "connect-multiparty": "^2.2.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.0.3",
+    "nodemon": "^3.0.2"
+  },
+  "name": "sahayogi-aama",
+  "version": "1.0.0",
+  "description": "nanny-booking",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js",
+    "test": "as"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/st6003/backend-31a-chelsangya.git"
+  },
+  "author": "Sangya Koirala",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/st6003/backend-31a-chelsangya/issues"
+  },
+  "homepage": "https://github.com/st6003/backend-31a-chelsangya#readme"
+}
