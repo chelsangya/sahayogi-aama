@@ -30,10 +30,11 @@ app.use(multiparty());
 
 
 cloudinary.config({ 
-  cloud_name: 'dczxrob6w', 
-  api_key: '153278163438971', 
-  api_secret: 'AylcERDx_b0d9n_2y4hsof7v1yE' 
+  cloud_name:dotenv.config().parsed.CLOUD_NAME,
+  api_key:dotenv.config().parsed.API_KEY,
+  api_secret: dotenv.config().parsed.API_SECRET
 });
+AylcERDx_b0d9n_2y4hsof7v1yE
 
 app.use('/api/user',require('./routes/userRoutes'));
 app.use('/api/aama', require('./routes/aamaRoutes'));
