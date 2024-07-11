@@ -4,9 +4,10 @@ const dotenv = require('dotenv');
 const connectDB = require('./database/database');
 const cors = require('cors');
 const multiparty = require('connect-multiparty');
-const cloudinary = require('cloudinary');
+const cloudinary = require('cloudinary').v2;
 const fs = require('fs');
 const https = require('https');
+const http = require('http');
 
 // create an instance of express
 const app = express();
@@ -47,18 +48,23 @@ app.get('/', (req, res) => {
     res.send('Hello, the server is running!');
 });
 
-// Load SSL certificate and key
-const sslOptions = {
-    key: fs.readFileSync('./ssl/private.key'),
-    cert: fs.readFileSync('./ssl/certificate.crt'),
-    // If you have an intermediate certificate, include it like this:
-    // ca: fs.readFileSync('./ssl/ca_bundle.crt')
-};
+// Load SSL certificate and key if HTTPS is enabled
+let server;
+if (process.env.HTTPS === 'true') {
+    const sslOptions = {
+        key: fs.readFileSync(process.env.SSL_KEY_FILE),
+        cert: fs.readFileSync(process.env.SSL_CRT_FILE)
+// Add this line if the key is encrypted
+    };
+    server = https.createServer(sslOptions, app);
+} else {
+    server = http.createServer(app);
+}
 
 // define port
-const PORT = process.env.PORT || 443; // Default to port 443 for HTTPS
+const PORT = process.env.PORT || 443;
 
-// run the HTTPS server
-https.createServer(sslOptions, app).listen(PORT, () => {
-    console.log(`HTTPS Server running on port ${PORT}`);
+// run the server
+server.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
 });
