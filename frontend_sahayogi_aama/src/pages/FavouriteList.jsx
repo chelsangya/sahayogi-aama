@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { deleteFavApi, getFavListApi } from '../apis/Api'
+import { createFavouriteApi, getFavListApi } from '../apis/Api'
 import Navbar from '../components/Navbar'
 
 const FavouriteList = () => {
@@ -17,8 +17,10 @@ const FavouriteList = () => {
         });
     }, [isUpdated])
 
-    const handleDelete = (id) => {
-        deleteFavApi(id).then((res) => {
+    const createFavourite = (aamaId) => {
+        const formData = new FormData();
+        formData.append('aamaId', aamaId)
+        createFavouriteApi(formData).then((res) => {
             if (res.data.success) {
                 setIsUpdated((v) => !v)
                 toast.success(res.data.message)
@@ -81,7 +83,7 @@ const FavouriteList = () => {
                                                 {favItem.to && favItem.to._id && (
                                                     <>
                                                         <Link to={`/aamaDetails/${favItem.to._id}`}><i className="fa-solid fa-eye text-red-500"></i></Link>
-                                                        <button onClick={() => handleDelete(favItem._id)}><i className="fa-solid fa-trash text-red-500"></i></button>
+                                                        <button onClick={() => createFavourite(favItem.to._id)}><i className="fa-solid fa-trash text-red-500"></i></button>
                                                     </>
                                                 )}
                                             </td>

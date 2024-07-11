@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import StripeCheckout from 'react-stripe-checkout';
 import { toast } from 'react-toastify';
-import { createBooking, createFavouriteApi, getAamaDetailsById } from '../apis/Api';
+import { createBooking, createFavouriteApi, createPaymentApi, getAamaDetailsById } from '../apis/Api';
 import Navbar from '../components/Navbar';
 
 const AamaDetails = () => {
@@ -17,11 +18,15 @@ const AamaDetails = () => {
     const [description, setDescription] = useState('');
     const [aamaImage, setAamaImage] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [fav, setFav] = useState(false);
     const [aamaId, setAamaId] = useState(id);
+    const [isUpdated, setIsUpdated] = useState(false);
     const [bookingData, setBookingData] = useState({
-        dateTime: '',
+        startDate: '',
+        endDate: '',
         aamaId: id,
     });
+    const [showBookingSection, setShowBookingSection] = useState(false);
 
     useEffect(() => {
         getAamaDetailsById(id).then((res) => {
@@ -36,18 +41,32 @@ const AamaDetails = () => {
             setLanguage(res.data.aamaDetail.language);
             setDescription(res.data.aamaDetail.description);
             setAamaId(res.data.aamaDetail._id)
+            setFav(res.data.aamaDetail.favourite);
         });
-    }, [id]);
+    }, [id, isUpdated]);
 
     const toggleModal = () => {
         setIsModalOpen(!isModalOpen);
     };
 
-    const handleDateTimeChange = (e) => {
-        setBookingData({ ...bookingData, dateTime: e.target.value });
+    const handleStartDateChange = (e) => {
+        const { value } = e.target;
+        setBookingData(prevData => ({
+            ...prevData,
+            startDate: value
+        }));
+    };
+
+    const handleEndDateChange = (e) => {
+        const { value } = e.target;
+        setBookingData(prevData => ({
+            ...prevData,
+            endDate: value
+        }));
     };
 
     const handleBookNow = () => {
+        setShowBookingSection(true); // Show the booking section
         console.log('Booking Data:', bookingData);
         createBooking(bookingData).then((res) => {
             if (res.data.success) {
@@ -65,6 +84,7 @@ const AamaDetails = () => {
         formData.append('aamaId', aamaId)
         createFavouriteApi(formData).then((res) => {
             if (res.data.success) {
+                setIsUpdated((v) => !v)
                 setSuccessMessage('Added to favorites!');
                 toast.success(res.data.message)
             } else {
@@ -74,6 +94,28 @@ const AamaDetails = () => {
             console.log(err)
         })
     }
+
+    const onToken = (token) => {
+        const data = {
+            token: token,
+            aamaId: id,
+            amount: charge,
+            startDate: bookingData.startDate,
+            endDate: bookingData.endDate
+        };
+
+        createPaymentApi(data)
+            .then(res => {
+                if (res.data.success) {
+                    toast.success(res.data.message)
+                } else {
+                    toast.error(res.data.message)
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    };
 
     return (
         <>
@@ -106,46 +148,61 @@ const AamaDetails = () => {
                         <p className='text-md'>Language</p>
                         <p className='text-md'>{language}</p>
                     </div>
+
                     <button
                         onClick={createFavourite}
                         className='w-[90%] py-3 text-center px-10 mt-4 mx-auto text-sm bg-blue-700 text-white rounded-lg hover:text-md'
-                        disabled={successMessage !== null}
+                        disabled={fav}
                     >
-                        {successMessage ? successMessage : 'Add to favorite'}{' '}
-                        {successMessage && <i className="fas fa-check"></i>}
+                        {fav ? (
+                            <>
+                                Added to favorite <i className="fas fa-check ml-2"></i>
+                            </>
+                        ) : (
+                            'Add to favorite'
+                        )}
+
                     </button>
-                    <Link onClick={toggleModal} className='w-[90%] py-3 text-center px-10 mt-2 mx-auto bg-blue-700 text-white rounded-lg hover:text-lg'>Book Now</Link>
+
+                    <div className='flex flex-col w-full p-10'>
+                        <label htmlFor="dateTime">From :</label>
+                        <input
+                            type="date"
+                            id="dateTime"
+                            name="dateTime"
+                            value={bookingData.startDate}
+                            onChange={handleStartDateChange}
+                        />
+                        <label className='mt-5' htmlFor="dateTime">To :</label>
+                        <input
+                            type="date"
+                            id="dateTime"
+                            name="dateTime"
+                            value={bookingData.endDate}
+                            onChange={handleEndDateChange}
+                        />
+
+                        <input type="hidden" name="aamaId" value={bookingData.aamaId} />
+                        <br />
+
+                        <StripeCheckout
+                            token={onToken}
+                            amount={charge}
+                            stripeKey="pk_test_51OqCeiSDGpHT5Zbc793mr3zZHrMb7VHMGd8v5AgZH1Zi2aB7lyqjesgJe1yduZHuSc4a1qjxgiSoy10lvqrxy31L00waeWB7YZ"
+                        />
+
+                        <button onClick={toggleModal} className="bg-red-700 text-white px-4 py-2 rounded-lg mt-4 w-full">Close</button>
+                    </div>
+
+                    {/* <Link onClick={handleBookNow} className='w-[90%] py-3 text-center px-10 mt-2 mx-auto bg-blue-700 text-white rounded-lg hover:text-lg'>Book Now</Link> */}
                 </div>
+
+
+
                 <div className="flex flex-col justify-center items-center gap-y-4 md:w-[40%] w-full md:px-20 px-6 overflow-hidden">
                     <h1 className='text-2xl font-semibold'>About Aama</h1>
                     <p className='mt-4 px-1'>{description}</p>
                 </div>
-
-                {isModalOpen && (
-                    <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 z-10">
-                        <div className="bg-white p-8 rounded-md md:w-[300px] w-full">
-                            <h2 className="text-2xl font-semibold mb-4">Booking</h2>
-                            <form className='flex flex-col'>
-                                <label htmlFor="dateTime">Date and Time:</label>
-                                <input
-                                    type="datetime-local"
-                                    id="dateTime"
-                                    name="dateTime"
-                                    value={bookingData.dateTime}
-                                    onChange={handleDateTimeChange}
-                                />
-
-                                <input type="hidden" name="aamaId" value={bookingData.aamaId} />
-
-                                <button type="button" onClick={handleBookNow} className="bg-blue-700 text-white px-4 py-2 rounded-lg mt-4">
-                                    Book Now
-                                </button>
-                            </form>
-
-                            <button onClick={toggleModal} className="bg-red-700 text-white px-4 py-2 rounded-lg mt-4 w-full">Close</button>
-                        </div>
-                    </div>
-                )}
             </main>
         </>
     );

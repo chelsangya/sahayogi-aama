@@ -18,6 +18,7 @@ const Login = () => {
         toast.error(res.data.message)
       } else {
         toast.success(res.data.message)
+        // set token time
         localStorage.setItem("token", res.data.token);
         const jsonDecode = JSON.stringify(res.data.userData)
         localStorage.setItem("user", jsonDecode);
@@ -54,6 +55,10 @@ const Login = () => {
           <div className="for-route">
             <p>Don't have an account ? </p>
             <Link to={'/signup'}>Register</Link>
+          </div>
+          <div className="for-route">
+            <p>Forgot your password ? </p>
+            <Link to={'/request-otp'}>Click here...</Link>
           </div>
         </form>
         <br />

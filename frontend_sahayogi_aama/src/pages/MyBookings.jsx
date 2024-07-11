@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 import { deleteBookingByIdApi, getAllBookingApi } from '../apis/Api';
 import Navbar from '../components/Navbar';
-import { toast } from 'react-toastify';
 
 const MyBookings = () => {
     const [bookings, setBookings] = useState([]);
@@ -32,13 +32,22 @@ const MyBookings = () => {
             });
     };
 
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+        });
+    };
+
     return (
         <>
             <Navbar />
-            <main className="w-full flex flex-col justify-start items-start text-black md:p-10 p-2">
+            <main className="w-full flex flex-col justify-start items-start text-black md:p-10 p-2 overflow-auto">
                 <h1 className="text-2xl font-semibold">My Bookings</h1>
-                <div className="relative overflow-x-auto pt-5 pl-5">
-                    <table className="w-full text-sm text-left rtl:text-right text-gray-900">
+                <div className="pt-5 pl-5" style={{overflowX: 'auto'}}>
+                    <table className="w-full text-sm text-left rtl:text-right text-gray-900 ">
                         <thead className="text-xs text-gray-900 uppercase bg-gray-50">
                             <tr>
                                 <th scope="col" className="px-6 py-3">
@@ -69,7 +78,10 @@ const MyBookings = () => {
                                     Description
                                 </th>
                                 <th scope="col" className="px-2 py-3">
-                                    Booked DateTime
+                                    Booked From
+                                </th>
+                                <th scope="col" className="px-2 py-3">
+                                    Booked To
                                 </th>
                                 <th scope="col" className="px-6 py-3">
                                     Action
@@ -114,7 +126,10 @@ const MyBookings = () => {
                                             {booking.aama ? booking.aama.description : 'N/A'}
                                         </td>
                                         <td className="px-6 py-4">
-                                            {booking.dateTime}
+                                            {formatDate(booking.startDate)}
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            {formatDate(booking.endDate)}
                                         </td>
                                         <td className="flex gap-2 px-6 py-4">
                                             <button onClick={() => handleDelete(booking._id)}>
