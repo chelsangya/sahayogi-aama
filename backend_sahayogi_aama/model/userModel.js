@@ -30,7 +30,16 @@ const userSchema = mongoose.Schema({
     favourite: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'favourite'
-    }
+    },
+    userImageUrl: {
+        type: String,
+        trim: true
+    },
+    otp: {
+        type: String,
+        default: false,
+      },
+
 });
 const Users=mongoose.model("users",userSchema);
 module.exports=Users;

@@ -1,0 +1,242 @@
+body {
+    margin: 0;
+    padding: 0;
+    background-color: rgb(33, 32, 32);
+    color: #9e9ea4;
+    font-family: 'Poppins', sans-serif;
+}
+
+.material-icons-outlined {
+    vertical-align: middle;
+    line-height: 1px;
+    font-size: 35px;
+    cursor: pointer;
+}
+.profile-text {
+    padding-left: 15px;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: 260px 1fr 1fr 1fr;
+    grid-template-rows: 0.2fr 3fr;
+    grid-template-areas:
+        "sidebar header header header"
+        "sidebar main main main";
+    /* height: 100vh; */
+}
+
+.header {
+    grid-area: header;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 15px 0 15px;
+    box-shadow: 0 6px 7px -3px rgba(0, 0, 0, 0.35);
+}
+
+.menu-icon {
+    display: none;
+    cursor: pointer;
+}
+
+#sidebar {
+    display: flex;
+    flex-direction: column;
+    grid-area: sidebar;
+    height: 100%;
+    background-color: #382c25;
+    overflow-y: auto;
+    transition: all 0.5s;
+    -webkit-transition: all 0.5s;
+}
+.profile-section {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: 200px;
+    height: 10vh;
+}
+
+.sidebar-title {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 15px 15px 15px 15px;
+}
+
+.sidebar-title > span {
+    display: none;
+}
+
+.sidebar-brand {
+    margin-top: 15px;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.sidebar-list {
+    padding: 0;
+    margin-top: 15px;
+    list-style-type: none;
+}
+
+.sidebar-list-item {
+    padding: 20px 20px 20px 20px;
+    font-size: 18px;
+}
+
+.sidebar-list-item:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+}
+
+.sidebar-list-item > a {
+    text-decoration: none;
+    color: #9e9ea4;
+    font-size: 17px;
+}
+
+.sidebar-responsive {
+    display: inline !important;
+    position: absolute;
+    z-index: 12 !important;
+}
+
+.main-container {
+    grid-area: main;
+    display: flex;
+    width: 100%;
+    overflow-y: auto;
+    align-items: start;
+    /* padding: 20px 20px; */
+    color: rgba(255, 255, 255, 0.95);
+}
+
+.main-title {
+    display: flex;
+}
+
+.main-cards {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 300px;
+    padding: 25px;
+    margin-top: 30px;
+    border-radius: 5px;
+    cursor: pointer;
+    color: white;
+    text-decoration: none;
+}
+
+.card:first-child {
+    background-color: #2962ff;
+}
+
+.card:nth-child(2) {
+    background-color: #ff6d00;
+}
+
+.card:nth-child(3) {
+    background-color: #2e7d32;
+}
+
+.card:nth-child(4) {
+    background-color: #2e7d32;
+}
+.card:nth-child(5) {
+    background-color: #2962ff;
+}
+.card:nth-child(6) {
+    background-color: #ff6d00;
+}
+.card:nth-child(7) {
+    background-color: #ff6d00;
+}
+
+.card-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.card-inner > .material-icons-outlined {
+    font-size: 45px;
+}
+
+.charts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 60px;
+}
+
+.charts-card {
+    background-color: #263043;
+    background-color: #9e9ea4;
+    margin-bottom: 20px;
+    padding: 25px;
+    box-sizing: border-box;
+    -webkit-column-break-inside: avoid;
+    border-radius: 5px;
+    box-shadow: 0 6px 7px -4px rgba(0, 0, 0, 0.2);
+}
+
+.chart-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: black;
+}
+
+@media screen and (max-width: 992px) {
+    .grid-container {
+        grid-template-columns: 1fr;
+        grid-template-rows: 0.2fr 3fr;
+        grid-template-areas:
+    "header"
+    "main";
+    }
+
+    #sidebar {
+        display: none;
+    }
+
+    .menu-icon {
+        display: inline;
+        cursor: pointer;
+    }
+
+    .sidebar-title > span {
+        display: inline;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .main-cards {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        margin-bottom: 0;
+    }
+
+    .charts {
+        grid-template-columns: 1fr;
+        margin-top: 30px;
+    }
+}
+
+@media screen and (max-width: 576px) {
+    .header-left {
+        display: none;
+    }
+}

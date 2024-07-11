@@ -7,10 +7,14 @@ const bookingSchema = mongoose.Schema({
     by: {
         type: mongoose.Schema.Types.ObjectId, ref: "users"
     },
-    dateTime: {
+    startDate: {
         type: Date,
         required: true
     },
+    endDate: {
+        type: Date,
+        required: true
+    }
 })
 
 const booking = mongoose.model("booking", bookingSchema)

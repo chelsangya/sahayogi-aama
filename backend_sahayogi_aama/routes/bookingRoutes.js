@@ -6,5 +6,6 @@ const authGuard = require('../middleware/authGuard')
 router.post('/create' ,authGuard ,bookingControllers.createBooking)
 router.get('/all', authGuard, bookingControllers.getAllBookings)
 router.delete('/delete/:id', authGuard, bookingControllers.deleteBookingById)
+router.post('/payment', authGuard, bookingControllers.makePayment)
 
 module.exports = router
