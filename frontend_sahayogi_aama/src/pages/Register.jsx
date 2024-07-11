@@ -33,13 +33,11 @@ const Register = () => {
       toast.error('Register Try-Catch Error');
       console.log(err.message);
     })
-
   }
 
   return (
     <>
       <main>
-
         <form className="auth-form">
           <div className="logo">
             <img src="../assets/images/logo.png" alt="" />
