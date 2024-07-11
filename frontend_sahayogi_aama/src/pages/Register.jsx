@@ -13,10 +13,8 @@ const Register = () => {
 
   const navigate = useNavigate()
   const handleSubmit = (e) => {
-    // prevents reload
     e.preventDefault()
     console.log(fullName, phoneNumber, email, password);
-    // making json data object
     const formData = new FormData()
     formData.append("fullName", fullName)
     formData.append("email", email)

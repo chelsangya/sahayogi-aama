@@ -18,10 +18,8 @@ const Login = () => {
         toast.error(res.data.message)
       } else {
         toast.success(res.data.message)
-        // set token time
         localStorage.setItem("token", res.data.token);
         const jsonDecode = JSON.stringify(res.data.userData)
-        // set user data
         localStorage.setItem("user", jsonDecode);
         if (res.data.userData.isAdmin === true) {
           window.location.replace('/aamaList');
