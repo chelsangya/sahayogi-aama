@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { loginUserApi } from '../apis/Api'
 import '../styles/login.css'
@@ -23,7 +23,11 @@ const Login = () => {
         const jsonDecode = JSON.stringify(res.data.userData)
         // set user data
         localStorage.setItem("user", jsonDecode);
-        window.location.replace('/availableAama')
+        if (res.data.userData.isAdmin === true) {
+          window.location.replace('/aamaList');
+        } else {
+          window.location.replace('/availableAama');
+        }
       }
     }).catch(err => {
       console.log(err.message)

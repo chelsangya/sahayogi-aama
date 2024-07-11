@@ -23,6 +23,7 @@ const corsPolicy = {
 };
 app.use(cors(corsPolicy));
 
+
 // mongodb connection
 connectDB();
 
@@ -54,7 +55,6 @@ if (process.env.HTTPS === 'true') {
     const sslOptions = {
         key: fs.readFileSync(process.env.SSL_KEY_FILE),
         cert: fs.readFileSync(process.env.SSL_CRT_FILE)
-// Add this line if the key is encrypted
     };
     server = https.createServer(sslOptions, app);
 } else {
@@ -66,5 +66,5 @@ const PORT = process.env.PORT || 443;
 
 // run the server
 server.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+    console.log(`Server running on port ${PORT} as ${process.env.HTTPS === 'true' ? 'HTTPS' : 'HTTP'}`);
 });
