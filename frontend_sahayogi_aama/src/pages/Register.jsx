@@ -124,13 +124,23 @@ const Register = () => {
             <div className="password-strength">
               <div
                 style={{
-                  width: `${(passwordStrength + 1) * 15}%`,
-                  height: '5px',
+                  width: `${(passwordStrength + 1) * 20}%`,
+                  height: '8px',
                   backgroundColor: getPasswordStrengthColor(passwordStrength),
                   marginTop: '5px',
                   borderRadius: '5px',
+                  transition: 'width 0.3s',
                 }}
               />
+            </div>
+            <div className="password-strength-label mt-2">
+              <p className={`text-sm ${passwordStrength >= 2 ? 'text-green-500' : 'text-red-500'}`}>
+                {passwordStrength === 0 && 'Very Weak'}
+                {passwordStrength === 1 && 'Weak'}
+                {passwordStrength === 2 && 'Fair'}
+                {passwordStrength === 3 && 'Good'}
+                {passwordStrength === 4 && 'Strong'}
+              </p>
             </div>
           </div>
           <button className='w-full mt-7 bg-blue-500 text-white py-2 rounded' onClick={handleSubmit}>Signup</button>
