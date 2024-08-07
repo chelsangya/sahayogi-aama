@@ -75,38 +75,15 @@ const Register = () => {
   };
 
   const getPasswordStrengthLabel = (score) => {
-    switch (score) {
-      case 0:
-        return 'Very Weak';
-      case 1:
-        return 'Weak';
-      case 2:
-        return 'So-so';
-      case 3:
-        return 'Good';
-      case 4:
-        return 'Great';
-      default:
-        return 'Very Weak';
-    }
+    if (score <= 1) return 'Weak';
+    if (score === 2) return 'Medium';
+    return 'Strong';
   };
 
   const getPasswordStrengthColor = (score) => {
-    switch (score) {
-      case 0:
-        return '#ff4d4d'; 
-      case 1:
-      
-        return '#FFA500'; 
-      case 2:
-        return '#FFFF00';
-      case 3:
-        return '#90EE90'; 
-      case 4:
-        return '#00ff00'; 
-      default:
-        return '#ff4d4d'; 
-    }
+    if (score <= 1) return '#ff4d4d'; // red
+    if (score === 2) return '#FFA500'; // orange
+    return '#00ff00'; // green
   };
 
   return (
