@@ -41,7 +41,7 @@ const RequestOTP = () => {
                     </div>
                     <button className='mt-7' onClick={handleSubmitOTP}>Request for OTP</button>
                     <div className="for-route">
-                        <p>Back to login </p>
+                        <p>Back to </p>
                         <Link to={'/'} className="text-blue-500">Login</Link>
                     </div>
                 </form>
