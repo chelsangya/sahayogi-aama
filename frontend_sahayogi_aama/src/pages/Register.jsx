@@ -94,17 +94,18 @@ const Register = () => {
   const getPasswordStrengthColor = (score) => {
     switch (score) {
       case 0:
-        return '#ff4d4d'; // red
+        return '#ff4d4d'; 
       case 1:
-        return '#ff944d'; // orange
+      
+        return '#FFA500'; 
       case 2:
-        return '#ffff4d'; // yellow
+        return '#FFFF00';
       case 3:
-        return '#9dff4d'; // light green
+        return '#90EE90'; 
       case 4:
-        return '#4dff4d'; // green
+        return '#00ff00'; 
       default:
-        return '#ff4d4d'; // red
+        return '#ff4d4d'; 
     }
   };
 
@@ -137,28 +138,17 @@ const Register = () => {
           <div className="w-full mt-5">
             <label htmlFor="password">Password</label>
             <input onChange={handlePasswordChange} type="password" placeholder="**********" />
-            {passwordError && <p className="text-red-500 text-sm">{passwordError}</p>}
+            {passwordError && <p className="text-red-500 text-small">{passwordError}</p>}
             <div className="password-strength">
               <div
                 style={{
-                  width: '100%',
-                  height: '8px',
-                  backgroundColor: '#e0e0e0',
+                  width: `${(passwordStrength + 1) * 20}%`,
+                  height: '100%',
+                  backgroundColor: getPasswordStrengthColor(passwordStrength),
                   borderRadius: '5px',
-                  marginTop: '5px',
-                  overflow: 'hidden',
+                  transition: 'width 0.3s',
                 }}
-              >
-                <div
-                  style={{
-                    width: `${(passwordStrength + 1) * 20}%`,
-                    height: '100%',
-                    backgroundColor: getPasswordStrengthColor(passwordStrength),
-                    borderRadius: '5px',
-                    transition: 'width 0.3s',
-                  }}
-                />
-              </div>
+              />
             </div>
             <div className="password-strength-label mt-2 text-right">
               <p className={`text-sm ${passwordStrength >= 2 ? 'text-green-500' : 'text-red-500'}`}>
