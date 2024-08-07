@@ -66,7 +66,7 @@ const AamaDetails = () => {
     };
 
     const handleBookNow = () => {
-        setShowBookingSection(true); // Show the booking section
+        setShowBookingSection(true);
         console.log('Booking Data:', bookingData);
         createBooking(bookingData).then((res) => {
             if (res.data.success) {
@@ -189,6 +189,8 @@ const AamaDetails = () => {
                             token={onToken}
                             amount={charge}
                             stripeKey="pk_test_51OqCeiSDGpHT5Zbc793mr3zZHrMb7VHMGd8v5AgZH1Zi2aB7lyqjesgJe1yduZHuSc4a1qjxgiSoy10lvqrxy31L00waeWB7YZ"
+                        // onClick={handleBookNow}
+
                         />
 
                         <button onClick={toggleModal} className="bg-red-700 text-white px-4 py-2 rounded-lg mt-4 w-full">Close</button>

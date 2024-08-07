@@ -24,12 +24,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/st6003/backend-31a-chelsangya.git"
+    "url": "git+https://github.com/chelsangya/sahayogi-aama"
   },
   "author": "Sangya Koirala",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/st6003/backend-31a-chelsangya/issues"
+    "url": "https://github.com/chelsangya/sahayogi-aama/issues"
   },
-  "homepage": "https://github.com/st6003/backend-31a-chelsangya#readme"
+  "homepage": "https://github.com/chelsangya/sahayogi-aama#readme"
 }
