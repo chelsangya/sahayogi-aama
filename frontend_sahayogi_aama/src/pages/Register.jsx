@@ -77,17 +77,17 @@ const Register = () => {
   const getPasswordStrengthColor = (score) => {
     switch (score) {
       case 0:
-        return 'red';
+        return '#ff4d4d'; // red
       case 1:
-        return 'orange';
+        return '#ff944d'; // orange
       case 2:
-        return 'yellow';
+        return '#ffff4d'; // yellow
       case 3:
-        return 'green';
+        return '#9dff4d'; // light green
       case 4:
-        return 'darkgreen';
+        return '#4dff4d'; // green
       default:
-        return 'red';
+        return '#ff4d4d'; // red
     }
   };
 
@@ -120,7 +120,7 @@ const Register = () => {
           <div className="w-full mt-5">
             <label htmlFor="password">Password</label>
             <input onChange={handlePasswordChange} type="password" placeholder="**********" />
-            {passwordError && <p className="text-red-500">{passwordError}</p>}
+            {passwordError && <p className="text-red-500 text-sm">{passwordError}</p>}
             <div className="password-strength">
               <div
                 style={{
@@ -128,14 +128,14 @@ const Register = () => {
                   height: '5px',
                   backgroundColor: getPasswordStrengthColor(passwordStrength),
                   marginTop: '5px',
+                  borderRadius: '3px',
                 }}
               />
             </div>
           </div>
-          <button className='w-full mt-7' onClick={handleSubmit}>Signup</button>
-          <div className="for-route">
-            <p>Already have an account ? </p>
-            <Link to={'/'}>Login</Link>
+          <button className='w-full mt-7 bg-blue-500 text-white py-2 rounded' onClick={handleSubmit}>Signup</button>
+          <div className="for-route mt-5">
+            <p>Already have an account? <Link to={'/'} className="text-blue-500">Login</Link></p>
           </div>
         </form>
         <br />
