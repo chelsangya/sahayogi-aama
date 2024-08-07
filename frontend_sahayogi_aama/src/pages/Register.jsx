@@ -74,6 +74,23 @@ const Register = () => {
     });
   };
 
+  const getPasswordStrengthLabel = (score) => {
+    switch (score) {
+      case 0:
+        return 'Very Weak';
+      case 1:
+        return 'Weak';
+      case 2:
+        return 'So-so';
+      case 3:
+        return 'Good';
+      case 4:
+        return 'Great';
+      default:
+        return 'Very Weak';
+    }
+  };
+
   const getPasswordStrengthColor = (score) => {
     switch (score) {
       case 0:
@@ -124,22 +141,28 @@ const Register = () => {
             <div className="password-strength">
               <div
                 style={{
-                  width: `${(passwordStrength + 1) * 20}%`,
+                  width: '100%',
                   height: '8px',
-                  backgroundColor: getPasswordStrengthColor(passwordStrength),
-                  marginTop: '5px',
+                  backgroundColor: '#e0e0e0',
                   borderRadius: '5px',
-                  transition: 'width 0.3s',
+                  marginTop: '5px',
+                  overflow: 'hidden',
                 }}
-              />
+              >
+                <div
+                  style={{
+                    width: `${(passwordStrength + 1) * 20}%`,
+                    height: '100%',
+                    backgroundColor: getPasswordStrengthColor(passwordStrength),
+                    borderRadius: '5px',
+                    transition: 'width 0.3s',
+                  }}
+                />
+              </div>
             </div>
-            <div className="password-strength-label mt-2">
+            <div className="password-strength-label mt-2 text-right">
               <p className={`text-sm ${passwordStrength >= 2 ? 'text-green-500' : 'text-red-500'}`}>
-                {passwordStrength === 0 && 'Very Weak'}
-                {passwordStrength === 1 && 'Weak'}
-                {passwordStrength === 2 && 'Fair'}
-                {passwordStrength === 3 && 'Good'}
-                {passwordStrength === 4 && 'Strong'}
+                {getPasswordStrengthLabel(passwordStrength)}
               </p>
             </div>
           </div>

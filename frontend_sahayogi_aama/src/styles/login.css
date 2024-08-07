@@ -20,6 +20,8 @@ main {
     justify-content: center;
     width: 100%;
     min-height: 100vh;
+    background-color: #f5f5f5;
+    /* Light background color for better contrast */
 }
 
 .logo {
@@ -39,6 +41,12 @@ main {
     justify-content: center;
     align-items: center;
     width: 400px;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #eaeaea;
+    border-radius: 5px;
+    background-color: #fff;
 }
 
 .auth-form label:nth-child(1) {
@@ -58,9 +66,8 @@ main {
     color: black;
     outline: none;
     border-radius: 8px;
-    border: 0;
+    border: 1px solid #ccc;
     font-size: 16px;
-    border: 1px solid black;
 }
 
 .auth-form input:nth-last-child(1) {
@@ -103,28 +110,31 @@ a {
     }
 }
 
-.auth-form {
-    max-width: 400px;
-    margin: 0 auto;
-    padding: 20px;
-    border: 1px solid #eaeaea;
-    border-radius: 5px;
-    background-color: #fff;
-}
-
-.logo img {
-    display: block;
-    margin: 0 auto;
-}
-
 .password-strength {
-    margin-top: 10px;
+    width: 100%;
+    height: 8px;
+    background-color: #e0e0e0;
+    border-radius: 5px;
+    margin-top: 5px;
+    overflow: hidden;
 }
 
-.text-danger {
+.password-strength div {
+    height: 100%;
+    border-radius: 5px;
+    transition: width 0.3s;
+}
+
+.password-strength-label {
+    font-size: 0.875rem;
+    text-align: right;
+    margin-top: 5px;
+}
+
+.text-green-500 {
+    color: #28a745;
+}
+
+.text-red-500 {
     color: #dc3545;
-}
-
-.text-primary {
-    color: #007bff;
 }

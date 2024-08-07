@@ -54,11 +54,11 @@ const Login = () => {
           <button className='mt-7' onClick={handleSubmit}>Login</button>
           <div className="for-route">
             <p>Don't have an account ? </p>
-            <Link to={'/signup'}>Register</Link>
+            <Link to={'/signup'} className="text-blue-500">Register</Link>
           </div>
           <div className="for-route">
             <p>Forgot your password ? </p>
-            <Link to={'/request-otp'}>Click here...</Link>
+            <Link to={'/request-otp'} className="text-red-500" >Click here...</Link>
           </div>
         </form>
         <br />
