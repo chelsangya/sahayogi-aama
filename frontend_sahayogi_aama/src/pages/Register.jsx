@@ -141,24 +141,13 @@ const Register = () => {
             <div className="password-strength">
               <div
                 style={{
-                  width: '100%',
+                  width: `${(passwordStrength + 1) * 20}%`,
                   height: '8px',
-                  backgroundColor: '#e0e0e0',
+                  backgroundColor: getPasswordStrengthColor(passwordStrength),
                   borderRadius: '5px',
-                  marginTop: '5px',
-                  overflow: 'hidden',
+                  transition: 'width 0.3s',
                 }}
-              >
-                <div
-                  style={{
-                    width: `${(passwordStrength + 1) * 20}%`,
-                    height: '100%',
-                    backgroundColor: getPasswordStrengthColor(passwordStrength),
-                    borderRadius: '5px',
-                    transition: 'width 0.3s',
-                  }}
-                />
-              </div>
+              />
             </div>
             <div className="password-strength-label mt-2 text-right">
               <p className={`text-sm ${passwordStrength >= 2 ? 'text-green-500' : 'text-red-500'}`}>

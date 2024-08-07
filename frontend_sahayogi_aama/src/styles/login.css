@@ -7,6 +7,8 @@
 body {
     font-family: 'Poppins', sans-serif;
     color: white;
+    background-color: #f5f5f5;
+    /* Background color for better contrast */
 }
 
 html {
@@ -20,8 +22,6 @@ main {
     justify-content: center;
     width: 100%;
     min-height: 100vh;
-    background-color: #f5f5f5;
-    /* Light background color for better contrast */
 }
 
 .logo {
@@ -67,6 +67,7 @@ main {
     outline: none;
     border-radius: 8px;
     border: 1px solid #ccc;
+    /* Changed for better UI */
     font-size: 16px;
 }
 
@@ -112,23 +113,31 @@ a {
 
 .password-strength {
     width: 100%;
-    height: 8px;
+    margin-top: 10px;
     background-color: #e0e0e0;
     border-radius: 5px;
-    margin-top: 5px;
     overflow: hidden;
 }
 
 .password-strength div {
-    height: 100%;
+    height: 8px;
     border-radius: 5px;
     transition: width 0.3s;
 }
 
 .password-strength-label {
     font-size: 0.875rem;
-    text-align: right;
     margin-top: 5px;
+    text-align: right;
+    /* Aligning to the right */
+}
+
+.text-danger {
+    color: #dc3545;
+}
+
+.text-primary {
+    color: #007bff;
 }
 
 .text-green-500 {
@@ -137,4 +146,12 @@ a {
 
 .text-red-500 {
     color: #dc3545;
+}
+
+.text-yellow-500 {
+    color: #ffc107;
+}
+
+.text-orange-500 {
+    color: #fd7e14;
 }
