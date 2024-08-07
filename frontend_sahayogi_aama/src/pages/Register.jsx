@@ -1,33 +1,68 @@
-import React, { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { toast } from 'react-toastify'
-import { registerUserApi } from '../apis/Api'
-import '../styles/login.css'
+import PasswordValidator from 'password-validator';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import zxcvbn from 'zxcvbn';
+import { registerUserApi } from '../apis/Api';
+import '../styles/login.css';
 
 const Register = () => {
+  const [fullName, setFullName] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [email, setEmail] = useState('');
+  const [address, setAddress] = useState('');
+  const [password, setPassword] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [passwordStrength, setPasswordStrength] = useState(0);
 
-  const [fullName, setFullName] = useState('')
-  const [phoneNumber, setPhoneNumber] = useState('')
-  const [email, setEmail] = useState('')
-  const [address, setAddress] = useState('')
-  const [password, setPassword] = useState('')
+  const navigate = useNavigate();
 
-  const navigate = useNavigate()
+  // Create a schema for password validation
+  const schema = new PasswordValidator();
+  schema
+    .is().min(8)
+    .is().max(100)
+    .has().uppercase()
+    .has().lowercase()
+    .has().digits()
+    .has().not().spaces();
+
+  const handlePasswordChange = (e) => {
+    const value = e.target.value;
+    setPassword(value);
+
+    // Check password strength using zxcvbn
+    const result = zxcvbn(value);
+    setPasswordStrength(result.score);
+
+    // Validate password
+    if (!schema.validate(value)) {
+      setPasswordError('Password must be 8-100 characters long, include uppercase and lowercase letters, digits, and no spaces.');
+    } else {
+      setPasswordError('');
+    }
+  };
+
   const handleSubmit = (e) => {
-    // prevents reload
-    e.preventDefault()
+    e.preventDefault();
+
+    // Ensure the password meets the policy
+    if (passwordError) {
+      return;
+    }
+
     console.log(fullName, phoneNumber, email, password);
-    // making json data object
-    const formData = new FormData()
-    formData.append("fullName", fullName)
-    formData.append("email", email)
-    formData.append("phoneNumber", phoneNumber)
-    formData.append("address", address)
-    formData.append("password", password)
+
+    const formData = new FormData();
+    formData.append("fullName", fullName);
+    formData.append("email", email);
+    formData.append("phoneNumber", phoneNumber);
+    formData.append("address", address);
+    formData.append("password", password);
 
     registerUserApi(formData).then((res) => {
       console.log('Register Api');
-      if (res.data.success == false) {
+      if (res.data.success === false) {
         toast.error(res.data.message);
       } else {
         toast.success(res.data.message);
@@ -36,14 +71,29 @@ const Register = () => {
     }).catch(err => {
       toast.error('Register Try-Catch Error');
       console.log(err.message);
-    })
+    });
+  };
 
-  }
+  const getPasswordStrengthColor = (score) => {
+    switch (score) {
+      case 0:
+        return 'red';
+      case 1:
+        return 'orange';
+      case 2:
+        return 'yellow';
+      case 3:
+        return 'green';
+      case 4:
+        return 'darkgreen';
+      default:
+        return 'red';
+    }
+  };
 
   return (
     <>
       <main>
-
         <form className="auth-form">
           <div className="logo">
             <img src="../assets/images/logo.png" alt="" />
@@ -52,35 +102,46 @@ const Register = () => {
           <h1 className='text-black font-semibold text-2xl'>Register with us :</h1>
           <br />
           <div className='w-full'>
-            <label for="fullname">Fullname</label>
+            <label htmlFor="fullname">Fullname</label>
             <input onChange={(e) => setFullName(e.target.value)} type="text" placeholder="Sangya Koirala" />
           </div>
           <div className="w-full mt-5">
-            <label for="email">Email address</label>
+            <label htmlFor="email">Email address</label>
             <input onChange={(e) => setEmail(e.target.value)} type="email" placeholder="koiralasangya@gmail.com" />
           </div>
           <div className="w-full mt-5">
-            <label for="phone">Phone Number</label>
+            <label htmlFor="phone">Phone Number</label>
             <input onChange={(e) => setPhoneNumber(e.target.value)} type="tel" placeholder="9800000000" />
           </div>
           <div className="w-full mt-5">
-            <label for="address">Address</label>
+            <label htmlFor="address">Address</label>
             <input onChange={(e) => setAddress(e.target.value)} type="text" placeholder="Kathmandu" />
           </div>
           <div className="w-full mt-5">
-            <label for="password">Password</label>
-            <input onChange={(e) => setPassword(e.target.value)} type="password" placeholder="**********" />
+            <label htmlFor="password">Password</label>
+            <input onChange={handlePasswordChange} type="password" placeholder="**********" />
+            {passwordError && <p className="text-red-500">{passwordError}</p>}
+            <div className="password-strength">
+              <div
+                style={{
+                  width: `${(passwordStrength + 1) * 20}%`,
+                  height: '5px',
+                  backgroundColor: getPasswordStrengthColor(passwordStrength),
+                  marginTop: '5px',
+                }}
+              />
+            </div>
           </div>
           <button className='w-full mt-7' onClick={handleSubmit}>Signup</button>
-          <div className="for-route" >
+          <div className="for-route">
             <p>Already have an account ? </p>
-            <Link to={'/'} >Login</Link>
+            <Link to={'/'}>Login</Link>
           </div>
         </form>
         <br />
       </main>
     </>
-  )
-}
+  );
+};
 
-export default Register
+export default Register;
