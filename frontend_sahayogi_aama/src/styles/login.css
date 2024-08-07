@@ -7,8 +7,7 @@
 body {
     font-family: 'Poppins', sans-serif;
     color: white;
-    background-color: #f5f5f5;
-    /* Background color for better contrast */
+    background-color: #f5f5f5; /* Background color for better contrast */
 }
 
 html {
@@ -66,8 +65,7 @@ main {
     color: black;
     outline: none;
     border-radius: 8px;
-    border: 1px solid #ccc;
-    /* Changed for better UI */
+    border: 1px solid #ccc; /* Changed for better UI */
     font-size: 16px;
 }
 
@@ -128,8 +126,7 @@ a {
 .password-strength-label {
     font-size: 0.875rem;
     margin-top: 5px;
-    text-align: right;
-    /* Aligning to the right */
+    text-align: right; /* Aligning to the right */
 }
 
 .text-danger {
