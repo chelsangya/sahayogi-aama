@@ -1,5 +1,6 @@
 import PasswordValidator from 'password-validator';
 import React, { useState } from 'react';
+import { ProgressBar } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import zxcvbn from 'zxcvbn';
@@ -74,20 +75,37 @@ const Register = () => {
     });
   };
 
-  const getPasswordStrengthColor = (score) => {
+  const getPasswordStrengthLabel = (score) => {
     switch (score) {
       case 0:
-        return '#ff4d4d'; // red
+        return 'Very Weak';
       case 1:
-        return '#ff944d'; // orange
+        return 'Weak';
       case 2:
-        return '#ffff4d'; // yellow
+        return 'Fair';
       case 3:
-        return '#9dff4d'; // light green
+        return 'Good';
       case 4:
-        return '#4dff4d'; // green
+        return 'Strong';
       default:
-        return '#ff4d4d'; // red
+        return 'Very Weak';
+    }
+  };
+
+  const getPasswordStrengthVariant = (score) => {
+    switch (score) {
+      case 0:
+        return 'danger';
+      case 1:
+        return 'danger';
+      case 2:
+        return 'warning';
+      case 3:
+        return 'info';
+      case 4:
+        return 'success';
+      default:
+        return 'danger';
     }
   };
 
@@ -120,22 +138,20 @@ const Register = () => {
           <div className="w-full mt-5">
             <label htmlFor="password">Password</label>
             <input onChange={handlePasswordChange} type="password" placeholder="**********" />
-            {passwordError && <p className="text-red-500 text-sm">{passwordError}</p>}
-            <div className="password-strength">
-              <div
-                style={{
-                  width: `${(passwordStrength + 1) * 20}%`,
-                  height: '5px',
-                  backgroundColor: getPasswordStrengthColor(passwordStrength),
-                  marginTop: '5px',
-                  borderRadius: '3px',
-                }}
+            {passwordError && <p className="text-danger small mt-1">{passwordError}</p>}
+            <div className="password-strength mt-2">
+              <ProgressBar
+                now={(passwordStrength + 1) * 20}
+                label={getPasswordStrengthLabel(passwordStrength)}
+                variant={getPasswordStrengthVariant(passwordStrength)}
+                className="mt-2"
+                style={{ height: '10px' }}
               />
             </div>
           </div>
-          <button className='w-full mt-7 bg-blue-500 text-white py-2 rounded' onClick={handleSubmit}>Signup</button>
-          <div className="for-route mt-5">
-            <p>Already have an account? <Link to={'/'} className="text-blue-500">Login</Link></p>
+          <button className='w-full mt-7 btn btn-primary' onClick={handleSubmit}>Signup</button>
+          <div className="for-route mt-3">
+            <p>Already have an account? <Link to={'/'} className="text-primary">Login</Link></p>
           </div>
         </form>
         <br />
