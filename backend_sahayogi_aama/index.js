@@ -60,20 +60,16 @@ connectDB();
 app.use(express.json({ limit: '40mb' }));
 app.use(express.urlencoded({ limit: '40mb', extended: true }));
 
-// Multiparty middleware for file uploads
 app.use(multiparty());
 
-// Static file serving
 app.use('/uploads', express.static(path.resolve(__dirname, 'uploads')));
 
-// Cloudinary configuration
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
   api_key: process.env.API_KEY,
   api_secret: process.env.API_SECRET,
 });
 
-// Routes
 app.use('/api/user', require('./routes/userRoutes'));
 app.use('/api/aama', require('./routes/aamaRoutes'));
 app.use('/api/booking', require('./routes/bookingRoutes'));
