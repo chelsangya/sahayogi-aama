@@ -39,6 +39,13 @@ const userSchema = mongoose.Schema({
         type: String,
         default: false,
       },
+      loginAttempts: {
+        type: Number,
+        default: 0
+    },
+    lockUntil: {
+        type: Date
+    }
 
 });
 const Users=mongoose.model("users",userSchema);
