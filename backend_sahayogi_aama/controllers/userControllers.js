@@ -2,7 +2,8 @@ const Users = require("../model/userModel");
 const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken');
 const cloudinary = require('cloudinary');
-const nodemailer = require('nodemailer')
+const nodemailer = require('nodemailer');
+const { validationResult } = require('express-validator');
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
@@ -13,7 +14,10 @@ const transporter = nodemailer.createTransport({
 });
 
 const createUser = async (req, res) => {
-  console.log(req.body);
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
 
   const { fullName, phoneNumber, email, password, address } = req.body;
 
@@ -21,7 +25,7 @@ const createUser = async (req, res) => {
     return res.json({
       success: false,
       message: 'All fields are required',
-    })
+    });
   }
 
   try {
@@ -32,8 +36,10 @@ const createUser = async (req, res) => {
         message: 'Email is already in use'
       });
     }
+
     const generatedSalt = await bcrypt.genSalt(10);
     const encryptedPassword = await bcrypt.hash(password, generatedSalt);
+
     const newUser = new Users({
       fullName,
       phoneNumber,
@@ -41,13 +47,15 @@ const createUser = async (req, res) => {
       address,
       password: encryptedPassword
     });
+
     await newUser.save();
+
     res.status(200).json({
       success: true,
       message: 'User created successfully',
     });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(500).json({
       success: false,
       message: "Server Error"
@@ -60,14 +68,12 @@ const loginUser = async (req, res) => {
   const LOCK_TIME = 3 * 60 * 1000; // 3 minutes in milliseconds
   const ATTEMPT_WINDOW = 15 * 60 * 1000; // 15 minutes in milliseconds
 
-  const { email, password } = req.body;
-
-  if (!email || !password) {
-    return res.json({
-      success: false,
-      message: 'All fields are required',
-    });
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
   }
+
+  const { email, password } = req.body;
 
   try {
     const foundUser = await Users.findOne({ email: email });
@@ -80,7 +86,6 @@ const loginUser = async (req, res) => {
 
     const now = Date.now();
 
-    // Check if the user is currently locked out
     if (foundUser.lockUntil && foundUser.lockUntil > now) {
       const lockTimeRemaining = Math.ceil((foundUser.lockUntil - now) / 1000); // in seconds
       return res.json({
@@ -92,19 +97,15 @@ const loginUser = async (req, res) => {
 
     const isPasswordCorrect = await bcrypt.compare(password, foundUser.password);
     if (!isPasswordCorrect) {
-      // Check if last attempt was within the attempt window
       if (foundUser.lastFailedAttempt && (now - foundUser.lastFailedAttempt.getTime()) > ATTEMPT_WINDOW) {
-        // Reset attempts if outside the window
         foundUser.loginAttempts = 1;
       } else {
-        // Increment login attempts
         foundUser.loginAttempts += 1;
       }
 
       foundUser.lastFailedAttempt = now;
 
       if (foundUser.loginAttempts >= MAX_ATTEMPTS) {
-        // Lock the account
         foundUser.lockUntil = now + LOCK_TIME;
         const lockTimeRemaining = Math.ceil(LOCK_TIME / 1000); // in seconds
         foundUser.loginAttempts = 0; // reset login attempts
@@ -126,7 +127,6 @@ const loginUser = async (req, res) => {
       });
     }
 
-    // Reset login attempts on successful login
     foundUser.loginAttempts = 0;
     foundUser.lockUntil = undefined;
     foundUser.lastFailedAttempt = undefined;
@@ -155,9 +155,12 @@ const loginUser = async (req, res) => {
 }
 
 const updateUserPassword = async (req, res) => {
-  try {
-    console.log(req.body);
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
 
+  try {
     const { currentPassword, newPassword } = req.body;
 
     if (!currentPassword || !newPassword) {
@@ -206,50 +209,49 @@ const updateUserPassword = async (req, res) => {
 };
 
 const updateUser = async (req, res) => {
-  console.log(req.body);
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
 
-  const { fullName,
-    email,
-    address,
-    phoneNumber } = req.body;
+  try {
+    const { fullName, email, address, phoneNumber } = req.body;
 
-  const id = req.user.id;
-  console.log(fullName, email, address, phoneNumber)
-  if (!fullName || !email || !address || !phoneNumber) {
-    res.json(
-      {
+    const id = req.user.id;
+
+    if (!fullName || !email || !address || !phoneNumber) {
+      return res.json({
         success: false,
         message: 'Please fill all fields'
       });
-  }
-  try {
-    const updatedUser = {
-      fullName: fullName,
-      email: email,
-      address: address,
-      phoneNumber: phoneNumber,
     }
+
+    const updatedUser = {
+      fullName,
+      email,
+      address,
+      phoneNumber,
+    };
+
     await Users.findByIdAndUpdate(id, updatedUser);
+
     res.json({
       success: true,
       message: "User Details Updated Successfully",
       user: updatedUser
-    })
+    });
   } catch (error) {
-    console.log(error)
-    res.status(500).json(
-      {
-        success: false,
-        message: 'Server Error'
-      }
-    )
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: 'Server Error'
+    });
   }
-}
+};
 
 const uploadImage = async (req, res) => {
   const userImage = req.files;
   const id = req.user.id;
-  console.log(req.body);
 
   if (!userImage) {
     return res.status(403).json({
@@ -268,7 +270,7 @@ const uploadImage = async (req, res) => {
       });
     }
 
-    await Users.findByIdAndUpdate(id, { userImageUrl: uploadedImage ? uploadedImage.secure_url : null, });
+    await Users.findByIdAndUpdate(id, { userImageUrl: uploadedImage ? uploadedImage.secure_url : null });
 
     res.status(200).json({
       success: true,
@@ -288,15 +290,18 @@ function generateOTP() {
 }
 
 const forgotPassword = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
   try {
     const { email } = req.body;
 
     const user = await Users.findOne({ email });
 
     if (!user) {
-      return res
-        .status(403)
-        .json({ success: false, message: "User not found" });
+      return res.status(403).json({ success: false, message: "User not found" });
     }
 
     const otp = generateOTP();
@@ -306,7 +311,7 @@ const forgotPassword = async (req, res) => {
     await user.save();
 
     const mailOptions = {
-      from: "",
+      from: "sahayogiaama@gmail.com",
       to: email,
       subject: "Password Reset",
       text: `Your OTP is ${otp}`,
@@ -314,9 +319,7 @@ const forgotPassword = async (req, res) => {
 
     transporter.sendMail(mailOptions, (error) => {
       if (error) {
-        return res
-          .status(500)
-          .json({ success: false, message: "Failed to send OTP" });
+        return res.status(500).json({ success: false, message: "Failed to send OTP" });
       }
       res.status(200).json({ success: true, message: "OTP sent successfully" });
     });
@@ -327,15 +330,18 @@ const forgotPassword = async (req, res) => {
 };
 
 const resetPassword = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
   try {
     const { email, otp, newPassword } = req.body;
 
     const user = await Users.findOne({ email });
 
     if (!user) {
-      return res
-        .status(403)
-        .json({ success: false, message: "User not found" });
+      return res.status(403).json({ success: false, message: "User not found" });
     }
 
     if (!user.otp) {
@@ -370,5 +376,11 @@ const resetPassword = async (req, res) => {
 };
 
 module.exports = {
-  createUser, loginUser, updateUserPassword, updateUser, uploadImage, resetPassword, forgotPassword
-}
+  createUser,
+  loginUser,
+  updateUserPassword,
+  updateUser,
+  uploadImage,
+  resetPassword,
+  forgotPassword
+};
