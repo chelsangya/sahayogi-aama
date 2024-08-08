@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const cloudinary = require('cloudinary');
 const nodemailer = require('nodemailer');
 const { validationResult } = require('express-validator');
+const sanitize = require('mongo-sanitize');
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
@@ -19,19 +20,13 @@ const createUser = async (req, res) => {
     return res.status(400).json({ errors: errors.array() });
   }
 
-  const { fullName, phoneNumber, email, password, address } = req.body;
-
-  if (!fullName || !phoneNumber || !email || !password || !address) {
-    return res.json({
-      success: false,
-      message: 'All fields are required',
-    });
-  }
+  const sanitizedBody = sanitize(req.body);
+  const { fullName, phoneNumber, email, password, address } = sanitizedBody;
 
   try {
     const existingUser = await Users.findOne({ email: email });
     if (existingUser) {
-      return res.json({
+      return res.status(400).json({
         success: false,
         message: 'Email is already in use'
       });
@@ -50,7 +45,7 @@ const createUser = async (req, res) => {
 
     await newUser.save();
 
-    res.status(200).json({
+    res.status(201).json({
       success: true,
       message: 'User created successfully',
     });
@@ -73,12 +68,13 @@ const loginUser = async (req, res) => {
     return res.status(400).json({ errors: errors.array() });
   }
 
-  const { email, password } = req.body;
+  const sanitizedBody = sanitize(req.body);
+  const { email, password } = sanitizedBody;
 
   try {
     const foundUser = await Users.findOne({ email: email });
     if (!foundUser) {
-      return res.json({
+      return res.status(404).json({
         success: false,
         message: 'User does not exist',
       });
@@ -88,7 +84,7 @@ const loginUser = async (req, res) => {
 
     if (foundUser.lockUntil && foundUser.lockUntil > now) {
       const lockTimeRemaining = Math.ceil((foundUser.lockUntil - now) / 1000); // in seconds
-      return res.json({
+      return res.status(423).json({
         success: false,
         message: `Account locked. Try again later.`,
         lockTimeRemaining,
@@ -107,10 +103,10 @@ const loginUser = async (req, res) => {
 
       if (foundUser.loginAttempts >= MAX_ATTEMPTS) {
         foundUser.lockUntil = now + LOCK_TIME;
-        const lockTimeRemaining = Math.ceil(LOCK_TIME / 1000); 
-        foundUser.loginAttempts = 0; 
+        const lockTimeRemaining = Math.ceil(LOCK_TIME / 1000);
+        foundUser.loginAttempts = 0;
         await foundUser.save();
-        return res.json({
+        return res.status(423).json({
           success: false,
           message: `Account locked. Try again later.`,
           lockTimeRemaining,
@@ -120,7 +116,7 @@ const loginUser = async (req, res) => {
       await foundUser.save();
 
       const attemptsLeft = MAX_ATTEMPTS - foundUser.loginAttempts;
-      return res.json({
+      return res.status(401).json({
         success: false,
         message: 'The credentials do not match',
         attemptsLeft,
@@ -161,21 +157,14 @@ const updateUserPassword = async (req, res) => {
   }
 
   try {
-    const { currentPassword, newPassword } = req.body;
-
-    if (!currentPassword || !newPassword) {
-      return res.json({
-        success: false,
-        message: 'Please enter both old and new passwords',
-      });
-    }
+    const sanitizedBody = sanitize(req.body);
+    const { currentPassword, newPassword } = sanitizedBody;
 
     const id = req.user.id;
-
     const user = await Users.findById(id);
 
     if (!user) {
-      return res.json({
+      return res.status(404).json({
         success: false,
         message: 'User not found',
       });
@@ -184,7 +173,7 @@ const updateUserPassword = async (req, res) => {
     const isPasswordMatch = await bcrypt.compare(currentPassword, user.password);
 
     if (!isPasswordMatch) {
-      return res.json({
+      return res.status(401).json({
         success: false,
         message: 'Invalid current password',
       });
@@ -195,7 +184,7 @@ const updateUserPassword = async (req, res) => {
 
     await Users.findByIdAndUpdate(id, { password: encryptedNewPassword });
 
-    res.json({
+    res.status(200).json({
       success: true,
       message: 'Password updated successfully',
     });
@@ -215,16 +204,10 @@ const updateUser = async (req, res) => {
   }
 
   try {
-    const { fullName, email, address, phoneNumber } = req.body;
+    const sanitizedBody = sanitize(req.body);
+    const { fullName, email, address, phoneNumber } = sanitizedBody;
 
     const id = req.user.id;
-
-    if (!fullName || !email || !address || !phoneNumber) {
-      return res.json({
-        success: false,
-        message: 'Please fill all fields'
-      });
-    }
 
     const updatedUser = {
       fullName,
@@ -235,7 +218,7 @@ const updateUser = async (req, res) => {
 
     await Users.findByIdAndUpdate(id, updatedUser);
 
-    res.json({
+    res.status(200).json({
       success: true,
       message: "User Details Updated Successfully",
       user: updatedUser
@@ -250,11 +233,11 @@ const updateUser = async (req, res) => {
 };
 
 const uploadImage = async (req, res) => {
-  const userImage = req.files;
   const id = req.user.id;
+  const userImage = req.files;
 
   if (!userImage) {
-    return res.status(403).json({
+    return res.status(400).json({
       success: false,
       message: "Please provide an image!",
     });
@@ -278,16 +261,16 @@ const uploadImage = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    return res.status(500).json({
+    res.status(500).json({
       success: false,
       message: 'Server Error',
     });
   }
 };
 
-function generateOTP() {
+const generateOTP = () => {
   return Math.floor(1000 + Math.random() * 9000);
-}
+};
 
 const forgotPassword = async (req, res) => {
   const errors = validationResult(req);
@@ -296,18 +279,20 @@ const forgotPassword = async (req, res) => {
   }
 
   try {
-    const { email } = req.body;
+    const { email } = sanitize(req.body);
 
     const user = await Users.findOne({ email });
 
     if (!user) {
-      return res.status(403).json({ success: false, message: "User not found" });
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
     }
 
     const otp = generateOTP();
 
     user.otp = otp;
-
     await user.save();
 
     const mailOptions = {
@@ -319,13 +304,22 @@ const forgotPassword = async (req, res) => {
 
     transporter.sendMail(mailOptions, (error) => {
       if (error) {
-        return res.status(500).json({ success: false, message: "Failed to send OTP" });
+        return res.status(500).json({
+          success: false,
+          message: "Failed to send OTP",
+        });
       }
-      res.status(200).json({ success: true, message: "OTP sent successfully" });
+      res.status(200).json({
+        success: true,
+        message: "OTP sent successfully",
+      });
     });
   } catch (error) {
     console.error("Error:", error);
-    res.status(500).json({ success: false, message: "Internal Server Error" });
+    res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
   }
 };
 
@@ -336,23 +330,29 @@ const resetPassword = async (req, res) => {
   }
 
   try {
-    const { email, otp, newPassword } = req.body;
+    const { email, otp, newPassword } = sanitize(req.body);
 
     const user = await Users.findOne({ email });
 
     if (!user) {
-      return res.status(403).json({ success: false, message: "User not found" });
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
     }
 
     if (!user.otp) {
-      return res.status(403).json({
+      return res.status(400).json({
         success: false,
         message: "Please enter OTP...",
       });
     }
 
     if (user.otp !== otp) {
-      return res.status(403).json({ success: false, message: "Invalid OTP" });
+      return res.status(401).json({
+        success: false,
+        message: "Invalid OTP",
+      });
     }
 
     const generateSalt = await bcrypt.genSalt(10);
