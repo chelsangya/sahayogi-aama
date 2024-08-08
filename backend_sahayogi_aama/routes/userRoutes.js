@@ -3,7 +3,6 @@ const { body, validationResult } = require('express-validator');
 const userController = require('../controllers/userControllers');
 const authGuard = require('../middleware/authGuard');
 
-// Input validation and sanitization for user creation
 router.post('/create', [
   body('email').isEmail().normalizeEmail(),
   body('password').isLength({ min: 5 }).trim().escape(),
@@ -12,7 +11,6 @@ router.post('/create', [
   body('address').trim().escape()
 ], userController.createUser);
 
-// Input validation and sanitization for user login
 router.post('/login', [
   body('email').isEmail().normalizeEmail(),
   body('password').isLength({ min: 5 }).trim().escape()
