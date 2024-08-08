@@ -28,10 +28,8 @@ const limiter = rateLimit({
   message: 'Too many requests from this IP, please try again later',
 });
 
-// Apply rate limiter to all requests
 app.use(limiter);
 
-// cors policy
 const corsPolicy = {
   origin: true,
   credentials: true,
@@ -39,13 +37,11 @@ const corsPolicy = {
 }
 app.use(cors(corsPolicy));
 
-// mongodb connection
 connectDB();
 
 app.use(express.json({ limit: '40mb' }));
 app.use(express.urlencoded({ limit: '40mb', extended: true }));
 
-// multiparty middleware
 app.use(multiparty());
 
 app.use('/uploads', (req, res, next) => {
