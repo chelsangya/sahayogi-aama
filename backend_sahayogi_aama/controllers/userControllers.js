@@ -107,8 +107,8 @@ const loginUser = async (req, res) => {
 
       if (foundUser.loginAttempts >= MAX_ATTEMPTS) {
         foundUser.lockUntil = now + LOCK_TIME;
-        const lockTimeRemaining = Math.ceil(LOCK_TIME / 1000); // in seconds
-        foundUser.loginAttempts = 0; // reset login attempts
+        const lockTimeRemaining = Math.ceil(LOCK_TIME / 1000); 
+        foundUser.loginAttempts = 0; 
         await foundUser.save();
         return res.json({
           success: false,
