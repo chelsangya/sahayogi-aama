@@ -86,18 +86,20 @@ const loginUser = async (req, res) => {
       });
     }
 
+    const now = Date.now();
+
     // Check if the user is currently locked out
-    if (foundUser.lockUntil && foundUser.lockUntil > Date.now()) {
+    if (foundUser.lockUntil && foundUser.lockUntil > now) {
+      const lockTimeRemaining = Math.ceil((foundUser.lockUntil - now) / 1000); // in seconds
       return res.json({
         success: false,
         message: `Account locked. Try again later.`,
+        lockTimeRemaining,
       });
     }
 
     const isPasswordCorrect = await bcrypt.compare(password, foundUser.password);
     if (!isPasswordCorrect) {
-      const now = Date.now();
-
       // Check if last attempt was within the attempt window
       if (foundUser.lastFailedAttempt && (now - foundUser.lastFailedAttempt.getTime()) > ATTEMPT_WINDOW) {
         // Reset attempts if outside the window
@@ -117,9 +119,11 @@ const loginUser = async (req, res) => {
 
       await foundUser.save();
 
+      const attemptsLeft = MAX_ATTEMPTS - foundUser.loginAttempts;
       return res.json({
         success: false,
         message: 'The credentials do not match',
+        attemptsLeft,
       });
     }
 
