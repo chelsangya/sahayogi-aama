@@ -64,48 +64,71 @@ const createUser = async (req, res) => {
 }
 
 const loginUser = async (req, res) => {
-  // step 1: check for incoming data
-  console.log(req.body);
-  //  step 2: destructure each data
+  const MAX_ATTEMPTS = 5;
+  const LOCK_TIME = 3 * 60 * 1000; // 3 minutes in milliseconds
+
   const { email, password } = req.body;
-  // step 3: validation
+
   if (!email || !password) {
     return res.json({
       success: false,
       message: 'All fields are required',
-    })
+    });
   }
-  // step 4: try catch block
+
   try {
-    // step 5: find the user
-    const foundUser = await Users.findOne({ email: email })
+    const foundUser = await Users.findOne({ email: email });
     if (!foundUser) {
       return res.json({
         success: false,
-        message: 'User does not exist'
-      })
+        message: 'User does not exist',
+      });
     }
-    // step 6: check the password
-    const dbPassword = foundUser.password;
-    const comparePassword = await bcrypt.compare(password, dbPassword);
-    if (!comparePassword) {
+
+    // Check if the user is currently locked out
+    if (foundUser.lockUntil && foundUser.lockUntil > Date.now()) {
+      return res.json({
+        success: false,
+        message: `Account locked. Try again later.`,
+      });
+    }
+
+    const isPasswordCorrect = await bcrypt.compare(password, foundUser.password);
+    if (!isPasswordCorrect) {
+      // Increment login attempts
+      foundUser.loginAttempts += 1;
+
+      if (foundUser.loginAttempts >= MAX_ATTEMPTS) {
+        // Lock the account
+        foundUser.lockUntil = Date.now() + LOCK_TIME;
+        foundUser.loginAttempts = 0; // reset login attempts
+      }
+
+      await foundUser.save();
+
       return res.json({
         success: false,
         message: 'The credentials do not match',
-      })
+      });
     }
-    // step 7: create a token
-    const token = await jwt.sign(
+
+    // Reset login attempts on successful login
+    foundUser.loginAttempts = 0;
+    foundUser.lockUntil = undefined;
+
+    const token = jwt.sign(
       { id: foundUser._id },
       process.env.JWT_TOKEN_SECRET,
-    )
-    // step 8: send a response
+    );
+
+    await foundUser.save();
+
     res.status(200).json({
       success: true,
       message: 'Logged in successfully',
       token: token,
       userData: foundUser,
-    })
+    });
 
   } catch (error) {
     console.log(error);
