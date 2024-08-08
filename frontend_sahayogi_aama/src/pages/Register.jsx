@@ -28,28 +28,35 @@ const Register = () => {
 
     // Check password strength using zxcvbn
     const result = zxcvbn(value);
-    setPasswordStrength(result.score);
 
     // Update password hints
-    setPasswordHints({
+    const newPasswordHints = {
       length: value.length >= 6,
       lowercase: /[a-z]/.test(value),
       uppercase: /[A-Z]/.test(value),
       numbers: /\d/.test(value),
       specialCharacters: /[!@#$%^&*(),.?":{}|<>]/.test(value),
-    });
+    };
+    setPasswordHints(newPasswordHints);
+
+    // Determine strength based on hints
+    const hintsMet = Object.values(newPasswordHints).filter(Boolean).length;
+    if (hintsMet === 5) {
+      setPasswordStrength(2); // Strong
+    } else if (hintsMet >= 3) {
+      setPasswordStrength(1); // Medium
+    } else {
+      setPasswordStrength(0); // Weak
+    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Ensure the password meets the policy
     if (passwordStrength < 1) {
       toast.error('Password is too weak.');
       return;
     }
-
-    console.log(fullName, phoneNumber, email, password);
 
     const formData = new FormData();
     formData.append("fullName", fullName);
@@ -59,7 +66,6 @@ const Register = () => {
     formData.append("password", password);
 
     registerUserApi(formData).then((res) => {
-      console.log('Register Api');
       if (res.data.success === false) {
         toast.error(res.data.message);
       } else {
@@ -130,17 +136,9 @@ const Register = () => {
               </p>
             </div>
             <div className="password-hints mb-3">
-              <div>
-                <span className="text-sm text-gray-800">Level:</span>
-                <span className={`text-sm font-semibold ${passwordStrength === 2 ? 'text-green-500' : passwordStrength === 1 ? 'text-orange-500' : 'text-red-500'}`}>
-                  {getPasswordStrengthLabel(passwordStrength)}
-                </span>
-              </div>
-
               <h4 className="my-2 text-sm font-semibold text-gray-800">
                 Your password must contain:
               </h4>
-
               <ul className="space-y-1 text-sm text-gray-500">
                 <li className={`flex items-center gap-x-2 ${passwordHints.length ? 'text-teal-500' : ''}`}>
                   <span className={passwordHints.length ? '' : 'hidden'}>
@@ -225,4 +223,5 @@ const Register = () => {
     </>
   );
 };
+
 export default Register;
