@@ -13,12 +13,10 @@ const winston = require('winston');
 const expressWinston = require('express-winston');
 const rateLimit = require('express-rate-limit');
 
-
 dotenv.config();
 
 const app = express();
 
-// Apply security middlewares
 app.use(
   helmet({
     contentSecurityPolicy: {
