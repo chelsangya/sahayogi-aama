@@ -9,8 +9,8 @@ const cloudinary = require('cloudinary');
 const fs = require('fs');
 const https = require('https');
 const http = require('http');
-const helmet = require('helmet');  // Import helmet
-const rateLimit = require('express-rate-limit'); // Import rateLimit
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 
 const app = express();
 
