@@ -66,6 +66,7 @@ const createUser = async (req, res) => {
 const loginUser = async (req, res) => {
   const MAX_ATTEMPTS = 5;
   const LOCK_TIME = 3 * 60 * 1000; // 3 minutes in milliseconds
+  const ATTEMPT_WINDOW = 15 * 60 * 1000; // 15 minutes in milliseconds
 
   const { email, password } = req.body;
 
@@ -95,12 +96,22 @@ const loginUser = async (req, res) => {
 
     const isPasswordCorrect = await bcrypt.compare(password, foundUser.password);
     if (!isPasswordCorrect) {
-      // Increment login attempts
-      foundUser.loginAttempts += 1;
+      const now = Date.now();
+
+      // Check if last attempt was within the attempt window
+      if (foundUser.lastFailedAttempt && (now - foundUser.lastFailedAttempt.getTime()) > ATTEMPT_WINDOW) {
+        // Reset attempts if outside the window
+        foundUser.loginAttempts = 1;
+      } else {
+        // Increment login attempts
+        foundUser.loginAttempts += 1;
+      }
+
+      foundUser.lastFailedAttempt = now;
 
       if (foundUser.loginAttempts >= MAX_ATTEMPTS) {
         // Lock the account
-        foundUser.lockUntil = Date.now() + LOCK_TIME;
+        foundUser.lockUntil = now + LOCK_TIME;
         foundUser.loginAttempts = 0; // reset login attempts
       }
 
@@ -115,6 +126,7 @@ const loginUser = async (req, res) => {
     // Reset login attempts on successful login
     foundUser.loginAttempts = 0;
     foundUser.lockUntil = undefined;
+    foundUser.lastFailedAttempt = undefined;
 
     const token = jwt.sign(
       { id: foundUser._id },
