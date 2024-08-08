@@ -1,18 +1,18 @@
 const mongoose = require('mongoose');
 const userSchema = mongoose.Schema({
-    fullName: { 
-        type: String, 
-        required: true 
+    fullName: {
+        type: String,
+        required: true
     },
     email: {
-        type:String,
-        required:true
+        type: String,
+        required: true
     },
     password: {
-        type:String,
-        required:true
+        type: String,
+        required: true
     },
-    phoneNumber:{
+    phoneNumber: {
         type: String,
         required: true
     },
@@ -24,7 +24,7 @@ const userSchema = mongoose.Schema({
         default: false
     },
     booked: {
-        type: mongoose.Schema.Types.ObjectId, 
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'booking'
     },
     favourite: {
@@ -38,15 +38,18 @@ const userSchema = mongoose.Schema({
     otp: {
         type: String,
         default: false,
-      },
-      loginAttempts: {
+    },
+    loginAttempts: {
         type: Number,
         default: 0
     },
     lockUntil: {
         type: Date
+    },
+    lastFailedAttempt: {
+        type: Date
     }
 
 });
-const Users=mongoose.model("users",userSchema);
-module.exports=Users;
+const Users = mongoose.model("users", userSchema);
+module.exports = Users;
