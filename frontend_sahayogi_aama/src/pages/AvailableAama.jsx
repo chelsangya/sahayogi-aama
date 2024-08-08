@@ -1,3 +1,4 @@
+import DOMPurify from 'dompurify';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getAamaDetailsApi } from '../apis/Api';
@@ -23,6 +24,12 @@ const AvailableAama = () => {
         setAamas(sortedAamas);
     };
 
+    const handleSearchQueryChange = (e) => {
+        // Sanitize input to prevent XSS
+        const sanitizedQuery = DOMPurify.sanitize(e.target.value);
+        setSearchQuery(sanitizedQuery);
+    };
+
     return (
         <>
             <Navbar />
@@ -32,10 +39,9 @@ const AvailableAama = () => {
                         type="text"
                         placeholder='Search here...'
                         value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
+                        onChange={handleSearchQueryChange}
                         className='w-[95%] px-5 text-black outline-none py-4'
                     />
-                    {/* <button className='w-[5%] h-[50px] bg-black text-large text-white'><i className="fa-solid fa-magnifying-glass"></i></button> */}
                 </form>
                 <div className="w-[90%] mt-10 mx-auto">
                     <div className="flex justify-between flex-wrap items-center w-full gap-y-4">
