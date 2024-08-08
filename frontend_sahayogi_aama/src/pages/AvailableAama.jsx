@@ -25,24 +25,35 @@ const AvailableAama = () => {
     };
 
     const handleSearchQueryChange = (e) => {
-        // Sanitize input to prevent XSS
         const sanitizedQuery = DOMPurify.sanitize(e.target.value);
         setSearchQuery(sanitizedQuery);
+    };
+
+    const handleClearSearch = () => {
+        setSearchQuery('');
     };
 
     return (
         <>
             <Navbar />
             <main className='w-full flex flex-col py-10 justify-start items-start text-black'>
-                <form className='w-[90%] border-2 rounded-md mx-auto'>
+                <div className='w-[90%] border-2 rounded-md mx-auto flex items-center px-4 py-2 bg-white'>
                     <input
                         type="text"
                         placeholder='Search here...'
                         value={searchQuery}
                         onChange={handleSearchQueryChange}
-                        className='w-[95%] px-5 text-black outline-none py-4'
+                        className='w-full px-4 text-black outline-none py-2'
                     />
-                </form>
+                    {searchQuery && (
+                        <button onClick={handleClearSearch} className='text-gray-500 ml-2'>
+                            <i className="fas fa-times"></i>
+                        </button>
+                    )}
+                    <button className='text-gray-500 ml-2'>
+                        <i className="fas fa-search"></i>
+                    </button>
+                </div>
                 <div className="w-[90%] mt-10 mx-auto">
                     <div className="flex justify-between flex-wrap items-center w-full gap-y-4">
                         <h1 className='text-4xl font-medium text-red-600'>Available आमा</h1>
