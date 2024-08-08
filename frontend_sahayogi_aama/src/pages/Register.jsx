@@ -26,10 +26,8 @@ const Register = () => {
     const value = e.target.value;
     setPassword(value);
 
-    // Check password strength using zxcvbn
     const result = zxcvbn(value);
 
-    // Update password hints
     const newPasswordHints = {
       length: value.length >= 6,
       lowercase: /[a-z]/.test(value),
@@ -39,14 +37,13 @@ const Register = () => {
     };
     setPasswordHints(newPasswordHints);
 
-    // Determine strength based on hints
     const hintsMet = Object.values(newPasswordHints).filter(Boolean).length;
     if (hintsMet === 5) {
-      setPasswordStrength(2); // Strong
+      setPasswordStrength(2);
     } else if (hintsMet >= 3) {
-      setPasswordStrength(1); // Medium
+      setPasswordStrength(1);
     } else {
-      setPasswordStrength(0); // Weak
+      setPasswordStrength(0);
     }
   };
 
@@ -85,9 +82,9 @@ const Register = () => {
   };
 
   const getPasswordStrengthColor = (score) => {
-    if (score === 0) return '#ff4d4d'; // red
-    if (score === 1) return '#FFA500'; // orange
-    return '#00ff00'; // green
+    if (score === 0) return '#ff4d4d';
+    if (score === 1) return '#FFA500';
+    return '#00ff00';
   };
 
   return (
@@ -123,7 +120,7 @@ const Register = () => {
               <div
                 style={{
                   width: `${(passwordStrength + 1) * 33.33}%`,
-                  height: '6px',
+                  height: '5px',
                   backgroundColor: getPasswordStrengthColor(passwordStrength),
                   borderRadius: '5px',
                   transition: 'width 0.3s',
