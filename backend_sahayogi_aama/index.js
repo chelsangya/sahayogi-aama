@@ -63,7 +63,6 @@ app.get('/', (req, res) => {
   res.send('Hello, the server is running!');
 });
 
-// Load SSL certificate and key if HTTPS is enabled
 let server;
 if (process.env.HTTPS === 'true') {
   const sslOptions = {
@@ -75,10 +74,8 @@ if (process.env.HTTPS === 'true') {
   server = http.createServer(app);
 }
 
-// Define port
 const PORT = process.env.PORT || 443;
 
-// Run the server
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT} as ${process.env.HTTPS === 'true' ? 'HTTPS' : 'HTTP'}`);
 });
