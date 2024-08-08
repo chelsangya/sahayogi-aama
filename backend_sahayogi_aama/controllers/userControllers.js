@@ -13,43 +13,35 @@ const transporter = nodemailer.createTransport({
 });
 
 const createUser = async (req, res) => {
-  // step 1: check incoming data
-  console.log(req.body); //body includes json data
+  console.log(req.body);
 
-  // step 2: destructure each data
   const { fullName, phoneNumber, email, password, address } = req.body;
 
-  // step 3: validation
   if (!fullName || !phoneNumber || !email || !password || !address) {
     return res.json({
       success: false,
       message: 'All fields are required',
     })
   }
-  // step 4: try catch block
+
   try {
-    // step 5: check if the user already exists
-    const existingUser = await Users.findOne({ email: email }); // use await for each db query
+    const existingUser = await Users.findOne({ email: email });
     if (existingUser) {
       return res.json({
         success: false,
         message: 'Email is already in use'
       });
     }
-    // password encryption
     const generatedSalt = await bcrypt.genSalt(10);
     const encryptedPassword = await bcrypt.hash(password, generatedSalt);
-    //  step 6: create new user
     const newUser = new Users({
-      fullName, // should write dbName:destructuredName if they are not same
+      fullName,
       phoneNumber,
       email,
       address,
       password: encryptedPassword
     });
-    // step 7: save the user
     await newUser.save();
-    // step 8: send response back to client
     res.status(200).json({
       success: true,
       message: 'User created successfully',
