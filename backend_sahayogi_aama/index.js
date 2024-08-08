@@ -9,11 +9,10 @@ const fs = require('fs');
 const https = require('https');
 const helmet = require('helmet');
 const xss = require('xss-clean');
-const hpp = require('hpp');
 const winston = require('winston');
 const expressWinston = require('express-winston');
 const rateLimit = require('express-rate-limit');
-const Joi = require('joi');
+
 
 dotenv.config();
 
@@ -51,7 +50,7 @@ app.use(
 );
 
 app.use(xss());
-app.use(hpp());
+
 
 // Apply rate limiting
 const limiter = rateLimit({
@@ -108,12 +107,7 @@ app.use('/api/booking', require('./routes/bookingRoutes'));
 app.use('/api/favourite', require('./routes/favouriteRoutes'));
 app.use('/api/contact', require('./routes/contactRoutes'));
 
-// Example validation with Joi
-const userSchema = Joi.object({
-  username: Joi.string().alphanum().min(3).max(30).required(),
-  email: Joi.string().email().required(),
-  password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')).required(),
-});
+
 
 app.post('/api/user', (req, res) => {
   const { error } = userSchema.validate(req.body);
