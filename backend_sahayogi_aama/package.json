@@ -18,7 +18,8 @@
     "nodemon": "^3.0.2",
     "punycode": "^2.3.1",
     "stripe": "^16.2.0",
-    "supertest": "^7.0.0"
+    "supertest": "^7.0.0",
+    "xss-clean": "^0.1.4"
   },
   "name": "sahayogi-aama",
   "version": "1.0.0",
