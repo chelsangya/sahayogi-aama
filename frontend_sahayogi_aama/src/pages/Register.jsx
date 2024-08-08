@@ -29,11 +29,11 @@ const Register = () => {
     const result = zxcvbn(value);
 
     const newPasswordHints = {
-      length: value.length >= 6,
+      length: value.length >= 8,
       lowercase: /[a-z]/.test(value),
       uppercase: /[A-Z]/.test(value),
       numbers: /\d/.test(value),
-      specialCharacters: /[!@#$%^&*(),.?":{}|<>]/.test(value),
+      specialCharacters: /[!@#$%^&*(),.?":{}|<>-]/.test(value),
     };
     setPasswordHints(newPasswordHints);
 
@@ -149,7 +149,7 @@ const Register = () => {
                       <path d="m6 6 12 12"></path>
                     </svg>
                   </span>
-                  Minimum number of characters is 6.
+                  Minimum number of characters is 8.
                 </li>
                 <li className={`flex items-center gap-x-2 ${passwordHints.lowercase ? 'text-teal-500' : ''}`}>
                   <span className={passwordHints.lowercase ? '' : 'hidden'}>
