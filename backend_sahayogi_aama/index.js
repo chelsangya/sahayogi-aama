@@ -25,10 +25,10 @@ app.use(
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
-        scriptSrc: ["'self'"], // Allow scripts from the same origin
-        styleSrc: ["'self'", "'unsafe-inline'"], // Allow styles from the same origin and inline styles
+        scriptSrc: ["'self'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
         imgSrc: ["'self'", "data:", "https:"],
-        connectSrc: ["'self'", "https://localhost:3000"], // Allow localhost for development
+        connectSrc: ["'self'", "https://localhost:3000"],
         fontSrc: ["'self'", "https:", "data:"],
         objectSrc: ["'none'"],
         upgradeInsecureRequests: [],
@@ -51,7 +51,7 @@ app.use(
 );
 
 app.use(xss());
-app.use(hpp()); // Apply HPP middleware globally
+app.use(hpp());
 
 // Apply rate limiting
 const limiter = rateLimit({
