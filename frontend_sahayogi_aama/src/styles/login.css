@@ -146,3 +146,27 @@ a {
     text-align: right;
     width: 100%;
 }
+.search-container {
+    position: relative;
+}
+
+.search-container input {
+    width: calc(100% - 40px);
+    padding-right: 40px;
+}
+
+.search-container button {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    color: #333;
+}
+
+.search-container button i {
+    font-size: 20px;
+}
