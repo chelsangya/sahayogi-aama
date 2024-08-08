@@ -19,7 +19,36 @@ dotenv.config();
 const app = express();
 
 // Use Helmet for security headers
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'trusted-scripts.com'"],
+        styleSrc: ["'self'", "'trusted-styles.com'", "'unsafe-inline'"],
+        imgSrc: ["'self'", "data:", "https:"],
+        connectSrc: ["'self'", "https://api.trusted-site.com"],
+        fontSrc: ["'self'", "https:", "data:"],
+        objectSrc: ["'none'"],
+        upgradeInsecureRequests: [],
+      },
+    },
+    crossOriginEmbedderPolicy: true,
+    crossOriginOpenerPolicy: { policy: "same-origin" },
+    crossOriginResourcePolicy: { policy: "same-origin" },
+    dnsPrefetchControl: { allow: false },
+    expectCt: { enforce: true, maxAge: 30 },
+    frameguard: { action: "sameorigin" },
+    hidePoweredBy: true,
+    hsts: { maxAge: 31536000, includeSubDomains: true, preload: true },
+    ieNoOpen: true,
+    noSniff: true,
+    permittedCrossDomainPolicies: { policy: "none" },
+    referrerPolicy: { policy: "no-referrer" },
+    xssFilter: true,
+  })
+);
+
 
 // Use xss-clean to sanitize input
 app.use(xss());
