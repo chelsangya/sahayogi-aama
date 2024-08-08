@@ -12,13 +12,10 @@ const http = require('http');
 const helmet = require('helmet');
 const xss = require('xss-clean');
 
-// Load environment variables
 dotenv.config();
 
-// Create Express app
 const app = express();
 
-// Use Helmet for security headers
 app.use(
   helmet({
     contentSecurityPolicy: {
@@ -49,11 +46,8 @@ app.use(
   })
 );
 
-
-// Use xss-clean to sanitize input
 app.use(xss());
 
-// Set CORS policy
 const corsPolicy = {
   origin: true,
   credentials: true,
@@ -61,10 +55,8 @@ const corsPolicy = {
 };
 app.use(cors(corsPolicy));
 
-// MongoDB connection
 connectDB();
 
-// Body parsers
 app.use(express.json({ limit: '40mb' }));
 app.use(express.urlencoded({ limit: '40mb', extended: true }));
 
