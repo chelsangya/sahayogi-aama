@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-import { deleteAamaById, getAamaDetailsApi, getAamaDetailsById } from '../../apis/Api';
+import { deleteAamaById, getAamaDetailsApi } from '../../apis/Api';
 import AdminSideBar from '../../components/AdminSideBar';
-import { Link, useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const AamaList = () => {
     const [aamas, setAamas] = useState([]);

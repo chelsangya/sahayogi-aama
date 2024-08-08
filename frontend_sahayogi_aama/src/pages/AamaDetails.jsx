@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import StripeCheckout from 'react-stripe-checkout';
 import { toast } from 'react-toastify';
-import { createBooking, createFavouriteApi, createPaymentApi, getAamaDetailsById } from '../apis/Api';
+import { createFavouriteApi, createPaymentApi, getAamaDetailsById } from '../apis/Api';
 import Navbar from '../components/Navbar';
 
 const AamaDetails = () => {
     const { id } = useParams();
-    const [successMessage, setSuccessMessage] = useState(null);
+    const [setSuccessMessage] = useState(null);
     const [aamaName, setAamaName] = useState('');
     const [age, setAge] = useState('');
     const [speciality, setSpeciality] = useState('');
@@ -26,7 +26,7 @@ const AamaDetails = () => {
         endDate: '',
         aamaId: id,
     });
-    const [showBookingSection, setShowBookingSection] = useState(false);
+    // const [setShowBookingSection] = useState(false);
 
     useEffect(() => {
         getAamaDetailsById(id).then((res) => {
@@ -65,19 +65,19 @@ const AamaDetails = () => {
         }));
     };
 
-    const handleBookNow = () => {
-        setShowBookingSection(true);
-        console.log('Booking Data:', bookingData);
-        createBooking(bookingData).then((res) => {
-            if (res.data.success) {
-                toast.success(res.data.message)
-            } else {
-                toast.error(res.data.message)
-            }
-        }).catch((error) => {
-            console.log(error)
-        })
-    };
+    // const handleBookNow = () => {
+    //     setShowBookingSection(true);
+    //     console.log('Booking Data:', bookingData);
+    //     createBooking(bookingData).then((res) => {
+    //         if (res.data.success) {
+    //             toast.success(res.data.message)
+    //         } else {
+    //             toast.error(res.data.message)
+    //         }
+    //     }).catch((error) => {
+    //         console.log(error)
+    //     })
+    // };
 
     const createFavourite = () => {
         const formData = new FormData();

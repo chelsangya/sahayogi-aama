@@ -32,7 +32,7 @@ const ChangePassword = () => {
             formData.append('newPassword', newPassword);
 
             editUserPassword(id, formData).then((res) => {
-                if (res.data.success == true) {
+                if (res.data.success === true) {
                     toast.success(res.data.message)
                 }
                 else {
@@ -40,6 +40,7 @@ const ChangePassword = () => {
                 }
             }).catch(err => {
                 toast.error("Server Error")
+                console.log(err)
             })
         } catch (error) {
             console.log('Error');

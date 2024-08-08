@@ -1,15 +1,15 @@
 import React, { useState } from "react";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 
 const Navbar = () => {
 
-  const navigate = useNavigate()
+  // const navigate = useNavigate()
 
-  const handleLogout = (e) => {
-    e.preventDefault()
-    localStorage.clear()
-    navigate('/')
-  }
+  // const handleLogout = (e) => {
+  //   e.preventDefault()
+  //   localStorage.clear()
+  //   navigate('/')
+  // }
 
   let links = [
     // { name: "HOME", link: "/" },

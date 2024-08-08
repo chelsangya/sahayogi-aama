@@ -22,7 +22,7 @@ const ResetPassword = () => {
         formData.append("newPassword", newPassword)
 
         resetPasswordApi(formData).then((res) => {
-            if (res.data.success == false) {
+            if (res.data.success === false) {
                 toast.error(res.data.message);
             } else {
                 toast.success(res.data.message);

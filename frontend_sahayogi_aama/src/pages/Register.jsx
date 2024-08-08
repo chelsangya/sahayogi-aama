@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import zxcvbn from 'zxcvbn';
+// import zxcvbn from 'zxcvbn';
 import { registerUserApi } from '../apis/Api';
 import '../styles/login.css';
 
@@ -26,7 +26,7 @@ const Register = () => {
     const value = e.target.value;
     setPassword(value);
 
-    const result = zxcvbn(value);
+    // const result = zxcvbn(value);
 
     const newPasswordHints = {
       length: value.length >= 8,
