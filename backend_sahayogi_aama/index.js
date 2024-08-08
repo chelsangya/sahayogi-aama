@@ -20,10 +20,10 @@ app.use(
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "'trusted-scripts.com'"],
-        styleSrc: ["'self'", "'trusted-styles.com'", "'unsafe-inline'"],
+        scriptSrc: ["'self'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
         imgSrc: ["'self'", "data:", "https:"],
-        connectSrc: ["'self'", "https://api.trusted-site.com"],
+        connectSrc: ["'self'", "http://localhost:3000"],
         fontSrc: ["'self'", "https:", "data:"],
         objectSrc: ["'none'"],
         upgradeInsecureRequests: [],
@@ -48,7 +48,7 @@ app.use(
 app.use(xss());
 
 const corsPolicy = {
-  origin: true,
+  origin: ['https://localhost:3000'],
   credentials: true,
   optionSuccessStatus: 200,
 };
