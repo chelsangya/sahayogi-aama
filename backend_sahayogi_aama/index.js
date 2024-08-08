@@ -12,16 +12,12 @@ const http = require('http');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 
-// Create an instance of express
 const app = express();
 
-// dotenv config
 dotenv.config();
 
-// Use helmet for security headers
 app.use(helmet());
 
-// Rate limiting policy
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100, // Limit each IP to 100 requests per windowMs
