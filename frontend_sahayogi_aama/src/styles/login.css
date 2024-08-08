@@ -3,12 +3,10 @@
     margin: 0;
     box-sizing: border-box;
 }
-
 body {
     font-family: 'Poppins', sans-serif;
     color: white;
 }
-
 html {
     scroll-behavior: smooth;
 }
