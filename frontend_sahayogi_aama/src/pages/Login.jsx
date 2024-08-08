@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { loginUserApi } from '../apis/Api';
@@ -7,6 +7,18 @@ import '../styles/login.css';
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [lockTimeRemaining, setLockTimeRemaining] = useState(null);
+  const [attemptsLeft, setAttemptsLeft] = useState(null);
+
+  useEffect(() => {
+    if (lockTimeRemaining) {
+      const timer = setInterval(() => {
+        setLockTimeRemaining((prev) => (prev > 1 ? prev - 1 : null));
+      }, 1000);
+
+      return () => clearInterval(timer);
+    }
+  }, [lockTimeRemaining]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -18,9 +30,11 @@ const Login = () => {
     loginUserApi(data).then((res) => {
       if (res.data.success === false) {
         if (res.data.message.includes('Account locked')) {
+          setLockTimeRemaining(res.data.lockTimeRemaining);
           toast.error(res.data.message);
         } else if (res.data.message.includes('The credentials do not match')) {
-          toast.error(res.data.message);
+          setAttemptsLeft(res.data.attemptsLeft);
+          toast.error(`${res.data.message}. Attempts left: ${res.data.attemptsLeft}`);
         } else {
           toast.error(res.data.message);
         }
@@ -60,7 +74,17 @@ const Login = () => {
             <label htmlFor="password">Password</label>
             <input onChange={(e) => setPassword(e.target.value)} type="password" placeholder="**********" required />
           </div>
-          <button className='mt-7' type="submit">Login</button>
+          {lockTimeRemaining && (
+            <div className="text-red-500">
+              Account locked. Try again in {lockTimeRemaining} seconds.
+            </div>
+          )}
+          {attemptsLeft !== null && !lockTimeRemaining && (
+            <div className="text-orange-500">
+              Attempts left: {attemptsLeft}
+            </div>
+          )}
+          <button className='mt-7' type="submit" disabled={!!lockTimeRemaining}>Login</button>
           <div className="for-route">
             <p>Don't have an account? </p>
             <Link to={'/signup'} className="text-blue-500">Register</Link>
