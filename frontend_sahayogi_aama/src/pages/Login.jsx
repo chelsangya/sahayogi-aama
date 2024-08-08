@@ -75,12 +75,12 @@ const Login = () => {
             <input onChange={(e) => setPassword(e.target.value)} type="password" placeholder="**********" required />
           </div>
           {lockTimeRemaining && (
-            <div className="text-red-500">
+            <div className="lock-message">
               Account locked. Try again in {lockTimeRemaining} seconds.
             </div>
           )}
           {attemptsLeft !== null && !lockTimeRemaining && (
-            <div className="text-orange-500">
+            <div className="attempts-message">
               Attempts left: {attemptsLeft}
             </div>
           )}
@@ -101,3 +101,4 @@ const Login = () => {
 }
 
 export default Login;
+
