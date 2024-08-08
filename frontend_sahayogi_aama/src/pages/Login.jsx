@@ -1,26 +1,34 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
-import { toast } from 'react-toastify'
-import { loginUserApi } from '../apis/Api'
-import '../styles/login.css'
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { loginUserApi } from '../apis/Api';
+import '../styles/login.css';
+
 const Login = () => {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
   const handleSubmit = (e) => {
-    e.preventDefault()
+    e.preventDefault();
     const data = {
       email: email,
       password: password
-    }
+    };
+
     loginUserApi(data).then((res) => {
-      console.log('Login Api')
       if (res.data.success === false) {
-        toast.error(res.data.message)
+        if (res.data.message.includes('Account locked')) {
+          toast.error(res.data.message);
+        } else if (res.data.message.includes('The credentials do not match')) {
+          toast.error(res.data.message);
+        } else {
+          toast.error(res.data.message);
+        }
       } else {
-        toast.success(res.data.message)
+        toast.success(res.data.message);
         // set token time
         localStorage.setItem("token", res.data.token);
-        const jsonDecode = JSON.stringify(res.data.userData)
+        const jsonDecode = JSON.stringify(res.data.userData);
         localStorage.setItem("user", jsonDecode);
         if (res.data.userData.isAdmin === true) {
           window.location.replace('/aamaList');
@@ -29,14 +37,15 @@ const Login = () => {
         }
       }
     }).catch(err => {
-      console.log(err.message)
-      toast.error('Login Try-Catch')
-    })
-  }
+      console.log(err.message);
+      toast.error('Login Try-Catch');
+    });
+  };
+
   return (
     <>
       <main>
-        <form className="auth-form">
+        <form className="auth-form" onSubmit={handleSubmit}>
           <div className="logo">
             <img src="../assets/images/logo.png" alt="" />
           </div>
@@ -44,27 +53,27 @@ const Login = () => {
           <h1 className='text-black font-semibold text-2xl'>Welcome back !!</h1>
           <br />
           <div className='w-full'>
-            <label for="email">Email address</label>
-            <input onChange={(e) => setEmail(e.target.value)} type="email" placeholder="koiralasangya@gmail.com" />
+            <label htmlFor="email">Email address</label>
+            <input onChange={(e) => setEmail(e.target.value)} type="email" placeholder="koiralasangya@gmail.com" required />
           </div>
           <div className='w-full mt-5'>
-            <label for="password">Password</label>
-            <input onChange={(e) => setPassword(e.target.value)} type="password" placeholder="**********" />
+            <label htmlFor="password">Password</label>
+            <input onChange={(e) => setPassword(e.target.value)} type="password" placeholder="**********" required />
           </div>
-          <button className='mt-7' onClick={handleSubmit}>Login</button>
+          <button className='mt-7' type="submit">Login</button>
           <div className="for-route">
-            <p>Don't have an account ? </p>
+            <p>Don't have an account? </p>
             <Link to={'/signup'} className="text-blue-500">Register</Link>
           </div>
           <div className="for-route">
-            <p>Forgot your password ? </p>
-            <Link to={'/request-otp'} className="text-red-500" >Click here...</Link>
+            <p>Forgot your password? </p>
+            <Link to={'/request-otp'} className="text-red-500">Click here...</Link>
           </div>
         </form>
         <br />
       </main>
     </>
-  )
-
+  );
 }
-export default Login
+
+export default Login;
