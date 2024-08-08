@@ -4,7 +4,7 @@ const connectDB = require('./database/database');
 const cors = require('cors');
 const path = require('path');
 const multiparty = require('connect-multiparty');
-const cloudinary = require('cloudinary');
+const cloudinary = require('cloudinary').v2;
 const fs = require('fs');
 const https = require('https');
 const helmet = require('helmet');
@@ -18,17 +18,17 @@ dotenv.config();
 
 const app = express();
 
-app.use('/api/logs', logRouter);
+// Set Security Headers using Helmet
 app.use(
   helmet({
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
-        scriptSrc: ["'self'"],
-        styleSrc: ["'self'", "'unsafe-inline'"],
+        scriptSrc: ["'self'", "https://cdnjs.cloudflare.com", "https://cdn.jsdelivr.net"],
+        styleSrc: ["'self'", "'unsafe-inline'", "https://cdnjs.cloudflare.com", "https://fonts.googleapis.com"],
         imgSrc: ["'self'", "data:", "https:"],
         connectSrc: ["'self'", "https://localhost:3000"],
-        fontSrc: ["'self'", "https:", "data:"],
+        fontSrc: ["'self'", "https:", "data:", "https://fonts.googleapis.com"],
         objectSrc: ["'none'"],
         upgradeInsecureRequests: [],
       },
@@ -38,7 +38,7 @@ app.use(
     crossOriginResourcePolicy: { policy: "same-origin" },
     dnsPrefetchControl: { allow: false },
     expectCt: { enforce: true, maxAge: 30 },
-    frameguard: { action: "sameorigin" },
+    frameguard: { action: "deny" },
     hidePoweredBy: true,
     hsts: { maxAge: 31536000, includeSubDomains: true, preload: true },
     ieNoOpen: true,
@@ -51,7 +51,7 @@ app.use(
 
 app.use(xss());
 
-
+// Rate limiting middleware
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
@@ -59,12 +59,15 @@ const limiter = rateLimit({
 });
 app.use('/api/', limiter);
 
-const corsPolicy = {
+// CORS options
+const corsOptions = {
   origin: ['https://localhost:3000'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
-  optionSuccessStatus: 200,
 };
-app.use(cors(corsPolicy));
+
+app.use(cors(corsOptions));
 
 connectDB();
 
@@ -80,6 +83,8 @@ cloudinary.config({
   api_key: process.env.API_KEY,
   api_secret: process.env.API_SECRET,
 });
+
+app.use('/api/logs', logRouter);
 
 app.use(expressWinston.logger({
   transports: [
@@ -98,12 +103,13 @@ app.use('/api/booking', require('./routes/bookingRoutes'));
 app.use('/api/favourite', require('./routes/favouriteRoutes'));
 app.use('/api/contact', require('./routes/contactRoutes'));
 
+// Allow access to robots.txt and sitemap.xml
+app.get('/robots.txt', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'robots.txt'));
+});
 
-
-app.post('/api/user', (req, res) => {
-  const { error } = userSchema.validate(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
-  // Proceed with user creation
+app.get('/sitemap.xml', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'sitemap.xml'));
 });
 
 // Default route
