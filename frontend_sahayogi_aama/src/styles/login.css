@@ -112,8 +112,7 @@ a {
 
 .password-strength {
     width: 100%;
-    height: 6px;
-    /* Reduced height */
+    height: 6px; /* Reduced height */
     background-color: #e0e0e0;
     border-radius: 5px;
     margin-top: 5px;
@@ -136,12 +135,26 @@ a {
     color: #28a745;
 }
 
+.text-orange-500 {
+    color: #FFA500;
+}
+
 .text-red-500 {
     color: #dc3545;
 }
 
 .text-small {
-    font-size: 0.8rem;
-    /* Smaller text size for validation message */
+    font-size: 0.8rem; /* Smaller text size for validation message */
     margin-top: 5px;
+}
+
+.password-hints ul {
+    list-style: none;
+    padding: 0;
+}
+
+.password-hints li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
