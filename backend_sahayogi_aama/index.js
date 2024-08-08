@@ -12,11 +12,13 @@ const xss = require('xss-clean');
 const winston = require('winston');
 const expressWinston = require('express-winston');
 const rateLimit = require('express-rate-limit');
+const logRouter = require('./routes/logs');
 
 dotenv.config();
 
 const app = express();
 
+app.use('/api/logs', logRouter);
 app.use(
   helmet({
     contentSecurityPolicy: {
@@ -50,43 +52,35 @@ app.use(
 app.use(xss());
 
 
-// Apply rate limiting
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
+  windowMs: 15 * 60 * 1000,
+  max: 100,
   message: 'Too many requests from this IP, please try again after 15 minutes',
 });
-app.use('/api/', limiter); // Apply to all API routes
+app.use('/api/', limiter);
 
-// Configure CORS
 const corsPolicy = {
-  origin: ['https://localhost:3000'], // Allow localhost for development
+  origin: ['https://localhost:3000'],
   credentials: true,
   optionSuccessStatus: 200,
 };
 app.use(cors(corsPolicy));
 
-// Connect to database
 connectDB();
 
-// Body parsers
 app.use(express.json({ limit: '40mb' }));
 app.use(express.urlencoded({ limit: '40mb', extended: true }));
 
-// Multiparty middleware for handling form data
 app.use(multiparty());
 
-// Serve static files
 app.use('/uploads', express.static(path.resolve(__dirname, 'uploads')));
 
-// Configure Cloudinary
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
   api_key: process.env.API_KEY,
   api_secret: process.env.API_SECRET,
 });
 
-// Setup logging with Winston
 app.use(expressWinston.logger({
   transports: [
     new winston.transports.Console(),
@@ -98,7 +92,6 @@ app.use(expressWinston.logger({
   ),
 }));
 
-// Define your routes
 app.use('/api/user', require('./routes/userRoutes'));
 app.use('/api/aama', require('./routes/aamaRoutes'));
 app.use('/api/booking', require('./routes/bookingRoutes'));
