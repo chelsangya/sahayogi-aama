@@ -1,3 +1,4 @@
+import DOMPurify from 'dompurify';
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -16,7 +17,9 @@ const ChangePassword = () => {
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmNewPassword, setConfirmNewPassword] = useState('');
-
+    const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+    const [showNewPassword, setShowNewPassword] = useState(false);
+    const [showConfirmNewPassword, setShowConfirmNewPassword] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -28,31 +31,29 @@ const ChangePassword = () => {
 
         try {
             const formData = new FormData();
-            formData.append('currentPassword', currentPassword);
-            formData.append('newPassword', newPassword);
+            formData.append('currentPassword', DOMPurify.sanitize(currentPassword));
+            formData.append('newPassword', DOMPurify.sanitize(newPassword));
 
             editUserPassword(id, formData).then((res) => {
                 if (res.data.success === true) {
-                    toast.success(res.data.message)
-                }
-                else {
-                    toast.error(res.data.message)
+                    toast.success(res.data.message);
+                } else {
+                    toast.error(res.data.message);
                 }
             }).catch(err => {
-                toast.error("Server Error")
-                console.log(err)
-            })
+                toast.error("Server Error");
+                console.log(err);
+            });
         } catch (error) {
             console.log('Error');
             toast.error('Hello');
         }
     };
 
-
     const handleLogout = (e) => {
-        e.preventDefault()
+        e.preventDefault();
         localStorage.clear();
-        navigate('/')
+        navigate('/');
     };
 
     return (
@@ -69,17 +70,56 @@ const ChangePassword = () => {
                     <form className='flex flex-col md:w-[70%] w-[100%] mx-auto py-2 text-black px-10 gap-y-1'>
                         <h1 className='text-2xl'>Password Settings</h1>
                         <label className='mt-5 text-md'>Current password</label>
-                        <input onChange={(e) => setCurrentPassword(e.target.value)} className='w-full h-12 border bg-neutral-200 text-black px-3 rounded-lg' type="password" />
+                        <div className="relative">
+                            <input
+                                onChange={(e) => setCurrentPassword(DOMPurify.sanitize(e.target.value))}
+                                className='w-full h-12 border bg-neutral-200 text-black px-3 rounded-lg'
+                                type={showCurrentPassword ? "text" : "password"}
+                            />
+                            <button
+                                type="button"
+                                className="absolute inset-y-0 right-0 px-3 py-2"
+                                onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                            >
+                                {showCurrentPassword ? "Hide" : "Show"}
+                            </button>
+                        </div>
                         <label className='mt-5 text-md'>New Password</label>
-                        <input onChange={(e) => setNewPassword(e.target.value)} className='w-full h-12 border bg-neutral-200 text-black px-3 rounded-lg' type="tel" />
+                        <div className="relative">
+                            <input
+                                onChange={(e) => setNewPassword(DOMPurify.sanitize(e.target.value))}
+                                className='w-full h-12 border bg-neutral-200 text-black px-3 rounded-lg'
+                                type={showNewPassword ? "text" : "password"}
+                            />
+                            <button
+                                type="button"
+                                className="absolute inset-y-0 right-0 px-3 py-2"
+                                onClick={() => setShowNewPassword(!showNewPassword)}
+                            >
+                                {showNewPassword ? "Hide" : "Show"}
+                            </button>
+                        </div>
                         <label className='mt-5 text-md'>Confirm new Password</label>
-                        <input onChange={(e) => setConfirmNewPassword(e.target.value)} className='w-full h-12 border bg-neutral-200 text-black px-3 rounded-lg' type="address" />
+                        <div className="relative">
+                            <input
+                                onChange={(e) => setConfirmNewPassword(DOMPurify.sanitize(e.target.value))}
+                                className='w-full h-12 border bg-neutral-200 text-black px-3 rounded-lg'
+                                type={showConfirmNewPassword ? "text" : "password"}
+                            />
+                            <button
+                                type="button"
+                                className="absolute inset-y-0 right-0 px-3 py-2"
+                                onClick={() => setShowConfirmNewPassword(!showConfirmNewPassword)}
+                            >
+                                {showConfirmNewPassword ? "Hide" : "Show"}
+                            </button>
+                        </div>
                         <button onClick={handleSubmit} className='w-full h-12 border bg-black text-white px-3 rounded-lg mt-10'>Change password</button>
                     </form>
                 </div>
             </main>
         </>
-    )
-}
+    );
+};
 
-export default ChangePassword
+export default ChangePassword;

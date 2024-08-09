@@ -12,8 +12,6 @@ const Contact = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
-        // Sanitize inputs
         const sanitizedData = {
             name: DOMPurify.sanitize(name),
             email: DOMPurify.sanitize(email),
