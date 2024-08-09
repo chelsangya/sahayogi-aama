@@ -7,7 +7,6 @@ const createBooking = async (req, res) => {
   console.log(req.body);
   const { aamaId, startDate, endDate } = req.body;
   const userId = req.user.id;
-
   if (!aamaId || !startDate || !endDate) {
     return res.status(403).json({
       success: false,
@@ -159,13 +158,12 @@ const makePayment = async (req, res) => {
     const { token, amount, aamaId, startDate, endDate } = req.body;
     console.log(req.body)
 
-    
+    // const days = Math.floor((endDate - startDate) / (1000 * 60 * 60 * 24));
 
     const customer = await stripe.customers.create({
       email: token.email,
       source: token.id,
     });
-
     const charge = await stripe.paymentIntents.create({
       amount: amount,
       currency: "usd",
@@ -179,7 +177,7 @@ const makePayment = async (req, res) => {
     // Save booking details
     const newBooking = new booking({
       aama: aamaId,
-      by: req.user.id, 
+      by: req.user.id,
       startDate: startDate,
       endDate: endDate,
     });

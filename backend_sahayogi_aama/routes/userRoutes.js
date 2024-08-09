@@ -1,9 +1,19 @@
 const express = require('express');
-const { body, validationResult } = require('express-validator');
 const userController = require('../controllers/userControllers');
 const authGuard = require('../middleware/authGuard');
-
+const { body, validationResult } = require('express-validator');
 const router = express.Router();
+
+router.post('/login', [
+  body('email').isEmail().normalizeEmail().withMessage('Invalid email'),
+  body('password').isLength({ min: 8 }).trim().escape().withMessage('Password must be at least 8 characters long')
+], (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ success: false, errors: errors.array() });
+  }
+  next();
+}, userController.loginUser);
 
 router.post('/create', [
   body('fullName').trim().escape().notEmpty().withMessage('Full name is required'),
@@ -18,17 +28,6 @@ router.post('/create', [
   }
   next();
 }, userController.createUser);
-
-router.post('/login', [
-  body('email').isEmail().normalizeEmail().withMessage('Invalid email'),
-  body('password').isLength({ min: 8 }).trim().escape().withMessage('Password must be at least 8 characters long')
-], (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ success: false, errors: errors.array() });
-  }
-  next();
-}, userController.loginUser);
 
 router.put('/editPassword/:id', authGuard, [
   body('currentPassword').isLength({ min: 8 }).trim().escape().withMessage('Current password is required'),

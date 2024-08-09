@@ -1,32 +1,46 @@
+import DOMPurify from 'dompurify'
 import React, { useState } from 'react'
 import { toast } from 'react-toastify'
 import { addToContactApi } from '../apis/Api'
 import Navbar from '../components/Navbar'
 
 const Contact = () => {
-    const [name, setName] = useState('')
-    const [email, setEmail] = useState('')
-    const [number, setNumber] = useState('')
-    const [message, setMessage] = useState('')
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [number, setNumber] = useState('');
+    const [message, setMessage] = useState('');
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const formData = new FormData();
-        formData.append('name', name)
-        formData.append('email', email)
-        formData.append('number', number)
-        formData.append('message', message)
 
-        addToContactApi(formData).then((res) => {
-            if (res.data.success) {
-                toast.success(res.data.message)
-            } else {
-                toast.error(res.data.message)
-            }
-        }).catch((err) => {
-            console.log(err)
-        })
-    }
+        // Sanitize inputs
+        const sanitizedData = {
+            name: DOMPurify.sanitize(name),
+            email: DOMPurify.sanitize(email),
+            number: DOMPurify.sanitize(number),
+            message: DOMPurify.sanitize(message),
+        };
+
+        const formData = new FormData();
+        formData.append('name', sanitizedData.name);
+        formData.append('email', sanitizedData.email);
+        formData.append('number', sanitizedData.number);
+        formData.append('message', sanitizedData.message);
+
+        addToContactApi(formData)
+            .then((res) => {
+                if (res.data.success) {
+                    toast.success(res.data.message);
+                } else {
+                    toast.error(res.data.message);
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+                toast.error('An error occurred while submitting the form.');
+            });
+    };
+
 
     return (
         <>

@@ -18,6 +18,13 @@ dotenv.config();
 
 const app = express();
 
+// const hstsMiddleware = (req, res, next) => {
+//   res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
+//   next();
+// };
+
+// app.use(hstsMiddleware);
+
 // Set Security Headers using Helmet
 app.use(
   helmet({

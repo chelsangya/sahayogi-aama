@@ -51,8 +51,11 @@ const Login = () => {
         }
       }
     }).catch(err => {
+      console.log('Login Try-Catch');
       console.log(err.message);
+
       toast.error('Login Try-Catch');
+
     });
   };
 
